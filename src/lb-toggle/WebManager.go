@@ -1,0 +1,37 @@
+package main
+
+import (
+	"net/http"
+)
+
+func startWeb() {
+	routes := map[string]func(http.ResponseWriter, *http.Request){
+		// return status
+		"/status":        statusWeb,
+		"/status/simple": statusSimpleWeb,
+
+		// turn on/off application (for benefit of monitor or LB)
+		"/toggle/on":  toggleOnWeb,
+		"/toggle/off": toggleOffWeb,
+		"/toggle":     toggleWeb,
+
+		"/fakesmoke":  fakeSmoke,
+		"/fakehealth": fakeHealth,
+
+		// show landing page?
+		// "/": dashBoard,
+	}
+
+	// register routes
+	for k, v := range routes {
+		http.HandleFunc(k, v)
+	}
+
+	// In case we want static content
+	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, r.URL.Path[1:])
+	})
+
+	// Host web server
+	panic(http.ListenAndServe(":"+SETTINGS.Service.HTTPPort, nil))
+}
