@@ -1,0 +1,11 @@
+{
+    "targets": {
+        "health_endpoint": "http://localhost:5704/fakehealth",
+        "smoke_endpoint": "http://localhost:5704/fakesmoke"
+    },
+    "service": {
+        "http_port": "5704",
+        "smoke_interval": 300,
+        "health_interval": 15
+    }
+}

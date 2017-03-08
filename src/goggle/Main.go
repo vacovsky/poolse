@@ -13,12 +13,14 @@ func main() {
 	SETTINGS.parseSettingsFile()
 
 	// Initialize the wait group so threads don't exit
-	WG.Add(2)
+	WG.Add(3)
 
 	// Start the Web application.
 	go startWeb()
 
 	// Monitor application for health status
-	go startMonitor()
+	go STATUS.startHealthMonitor()
+	go STATUS.startSmokeMonitor()
+
 	WG.Wait()
 }
