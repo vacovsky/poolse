@@ -1,4 +1,4 @@
-# LB-Health-Toggle
+# LB-Toggle
 
 - Provides a monitorable toggle switch for load balanced applications, especially those with health and smoke endpoints.
 
