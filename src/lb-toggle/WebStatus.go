@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -27,6 +28,7 @@ func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
 	if STATUS.HealthStatus.OK && STATUS.SmokeStatus.OK && STATUS.State {
 		rw.WriteHeader(http.StatusOK)
 	} else {
-		// http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
+		panic(err)
 	}
 }

@@ -8,7 +8,9 @@
 
 ## API
 
-### "/status":  Shows long-form status to the caller - structured as follows:
+### "/status"
+
+-Shows long-form status to the caller
 
 ``` json
 {
@@ -46,7 +48,6 @@
 
 - If "HealthStatus.OK" and "SmokeStatus.OK" are true, sets "State" to true if "!State".
 - If "State" is true, then sets "State" to false.
-
 
 ### "/fakesmoke" and "/fakehealth"
 
