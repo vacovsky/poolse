@@ -10,7 +10,7 @@
 
 ### "/status"
 
--Shows long-form status to the caller
+- Shows long-form status to the caller
 
 ``` json
 {
