@@ -1,4 +1,4 @@
-# LB-Health-Toggle
+# LB-Toggle
 
 - Provides a monitorable toggle switch for load balanced applications, especially those with health and smoke endpoints.
 
@@ -50,4 +50,4 @@
 
 ### "/fakesmoke" and "/fakehealth"
 
-- Fake endpoints that return 200, and are the defaults in the config file.  This is just for POC and testing, buf if you don't have a smoke endpoint but do have a health endpoint, leave it to what it's already set to in the config file.
+- Fake endpoints that return 200, and are the defaults in the config file.  This is just for POC and testing, but if you don't have a smoke endpoint and do have a health endpoint, leave it to what it's already set to in the config file.
