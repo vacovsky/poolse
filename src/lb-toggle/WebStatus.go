@@ -22,3 +22,11 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 }
+
+func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
+	if STATUS.HealthStatus.OK && STATUS.SmokeStatus.OK && STATUS.State {
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		// http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
+}

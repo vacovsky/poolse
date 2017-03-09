@@ -7,8 +7,9 @@ import (
 func startWeb() {
 	routes := map[string]func(http.ResponseWriter, *http.Request){
 		// return status
-		"/status":        statusWeb,
-		"/status/simple": statusSimpleWeb,
+		"/status":         statusWeb,
+		"/status/simple":  statusSimpleWeb,
+		"/status/simple2": statusSimple2Web,
 
 		// turn on/off application (for benefit of monitor or LB)
 		"/toggle/on":  toggleOnWeb,

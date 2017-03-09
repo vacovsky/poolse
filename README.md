@@ -29,6 +29,11 @@
 - Returns 500 error if "State", "HealthStatus.OK", or "SmokeStatus.OK" return false.
 - Returns 200 if they all return true.
 
+### "/status/simple2"
+
+- Returns 200 status when "State", "HealthStatus.OK", and "SmokeStatus.OK" are true.
+- Returns *NO RESPONSE* error if "State", "HealthStatus.OK", or "SmokeStatus.OK" return false.  This is for F5's health monitor.
+
 ### "/toggle/on"
 
 - If "HealthStatus.OK" and "SmokeStatus.OK" are true, sets "State" to true.
