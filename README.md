@@ -22,7 +22,7 @@ go build
 ./lb-toggle /path/to/config.json
 ```
 
-``` json
+``` javascript
 {
     "targets": {
         "health_endpoint": "http://localhost:5704/fakehealth",  // url to your application's health endpoint
