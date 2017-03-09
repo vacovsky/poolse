@@ -47,7 +47,7 @@ func (s *Status) checkAppHealth() {
 	if r.StatusCode == 200 {
 		STATUS.HealthStatus.OK = true
 	} else {
-		STATUS.HealthStatus.OK = true
+		STATUS.HealthStatus.OK = false
 	}
 	STATUS.HealthStatus.Last = time.Now()
 }
