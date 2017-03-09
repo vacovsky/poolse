@@ -62,7 +62,7 @@ go build
 
 ### "/status/simple"
 
-- Returns 500 error if "State", "HealthStatus.OK", or "SmokeStatus.OK" return false.
+- Returns 503 (Service Unavailable) error if "State", "HealthStatus.OK", or "SmokeStatus.OK" return false.
 - Returns 200 if they all return true.
 
 ### "/status/simple2"
