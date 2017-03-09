@@ -41,4 +41,11 @@ func (s *Settings) parseSettingsFile() {
 	if err = jsonParser.Decode(&s); err != nil {
 		fmt.Println("Could not load config file. Check JSON formatting.", err.Error())
 	}
+
+	// Set some properties fromt he config
+	STATUS.HealthStatus.Endpoint = SETTINGS.Target.HealthEndpoint
+	STATUS.HealthStatus.Interval = SETTINGS.Service.HealthInterval
+
+	STATUS.SmokeStatus.Endpoint = SETTINGS.Target.SmokeEndpoint
+	STATUS.SmokeStatus.Interval = SETTINGS.Service.SmokeInterval
 }

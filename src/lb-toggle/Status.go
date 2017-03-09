@@ -10,12 +10,16 @@ import (
 type Status struct {
 	State        bool
 	HealthStatus struct {
-		OK   bool
-		Last time.Time
+		OK       bool
+		Last     time.Time
+		Endpoint string
+		Interval int
 	}
 	SmokeStatus struct {
-		OK   bool
-		Last time.Time
+		OK       bool
+		Last     time.Time
+		Endpoint string
+		Interval int
 	}
 }
 
