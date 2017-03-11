@@ -33,7 +33,7 @@ func (s *Status) checkAppSmoke() {
 		// bodyBytes, err2 := ioutil.ReadAll(r.Body)
 		// bodyString = string(bodyBytes)
 	} else {
-		STATUS.HealthStatus.OK = false
+		STATUS.SmokeStatus.OK = false
 	}
 	STATUS.SmokeStatus.Last = time.Now()
 }
