@@ -1,11 +1,20 @@
 {
-    "targets": {
-        "health_endpoint": "http://localhost:5704/fakehealth",
-        "smoke_endpoint": "http://localhost:5704/fakesmoke"
-    },
+    "targets": [
+        {
+            "endpoint": "http://localhost:5704/fakehealth",
+            "polling_interval": 15,
+            "expected_status_code": 200
+        },
+        {
+            "name": "FakeSmoke",
+            "endpoint": "http://localhost:5704/fakesmoke",
+            "polling_interval": 300,
+            "expected_status_code": 200,
+            "expected_response_string": "",
+            "unexpected_response_string": ""
+        }
+    ],
     "service": {
-        "http_port": "5704",
-        "smoke_interval": 300,
-        "health_interval": 15
+        "http_port": "5704"
     }
 }

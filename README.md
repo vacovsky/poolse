@@ -24,14 +24,23 @@ go build
 
 ``` javascript
 {
-    "targets": {
-        "health_endpoint": "http://localhost:5704/fakehealth",  // url to your application's health endpoint
-        "smoke_endpoint": "http://localhost:5704/fakesmoke"  // url to your application's smoke endpoint
-    },
+    "targets": [
+        {
+            "endpoint": "http://localhost:5704/fakehealth",  // url to your application's health endpoint
+            "polling_interval": 15,  // polling interval for target endpoint, in seconds
+            "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+        },
+        {
+            "name": "FakeSmoke"  // Arbitrary - use for your own reasons, or leave it blank.
+            "endpoint": "http://localhost:5704/fakesmoke",  // url to your application's health endpoint
+            "polling_interval": 300,  // polling interval for target endpoint, in seconds
+            "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+            "expected_response_string": ""  // response is parsed for this string.  If expected_response_string is blank, check is ignored.  If found, OK is true
+            "unexpected_response_string": ""  // response is parsed for this string.  If unexpected_response_string is blank, check is ignored.  If found, OK is false  (an example would be searching repsonse text for {"thisthing": false}, and if found, causes OK to be set to false)
+        }
+    ],
     "service": {
-        "http_port": "5704",  // port to listen on for incoming web requests
-        "smoke_interval": 300,  // polling interval for smoke endpoint, in seconds
-        "health_interval": 15  // polling interval for health endpoint, in seconds
+        "http_port": "5704",  // *string not int; port to listen on for incoming web requests
     }
 }
 ```
@@ -42,21 +51,24 @@ go build
 
 - Shows long-form status to the caller
 
-``` json
+``` javascript
 {
-    "State": false,
-    "HealthStatus": {
-        "OK": true,
-        "Last": "2017-03-09T12:35:35.24445478-08:00",
-        "Endpoint": "http://localhost:5704/fakehealth",
-        "Interval": 15
+    "State": false,  // If both Health and Smoke are OK, this can be enabled.  If either of the mentioned are *NOT OK*, will be false.  If both endpoints are OK, this can be toggled true and false.
+    "Targets": [{
+        "name": "FakeHealth"
+        "OK": true,  // true if OK, false if BAD
+        "Last": "2017-03-09T12:35:35.24445478-08:00",  // last time the status of the health endpoint was OK
+        "Endpoint": "http://localhost:5704/fakehealth",  // URL to check for status
+        "Interval": 15  // interval in seconds between polls
     },
-    "SmokeStatus": {
-        "OK": true,
-        "Last": "2017-03-09T12:35:35.244431726-08:00",
-        "Endpoint": "http://localhost:5704/fakesmoke",
-        "Interval": 300
-    }
+    {
+        "Name": "FakeSmoke"  // Arbitrary - use for your own reasons, or leave it blank.
+        "OK": true,  // true if OK, false if BAD
+        "Last": "2017-03-09T12:35:35.24445478-08:00",  // last time the status of the health endpoint was OK
+        "Endpoint": "http://pirri.vacovsky.us/login",  // URL to check for status
+        "Interval": 300  // interval in seconds between polls
+    }],
+    "Version": 0.2.0  // version of the health check app
 }
 ```
 
