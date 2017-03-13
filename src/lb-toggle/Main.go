@@ -15,11 +15,11 @@ func main() {
 	// Initialize the wait group so threads don't exit
 	WG.Add(1)
 
-	// Start the Web application.
-	go startWeb()
-
 	// Monitor application for health status
 	STATUS.startMonitor()
+
+	// Start the Web application.
+	go startWeb()
 
 	WG.Wait()
 }

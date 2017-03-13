@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 // Status indicates the state of the application being monitored
 type Status struct {
 	State   bool
@@ -9,6 +13,9 @@ type Status struct {
 
 func (s *Status) startMonitor() {
 	for _, target := range STATUS.Targets {
+		if SETTINGS.Service.Debug {
+			fmt.Println("Starting ", target.Name, target.Endpoint)
+		}
 		WG.Add(1)
 		go target.Monitor()
 	}
