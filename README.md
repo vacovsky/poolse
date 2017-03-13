@@ -9,6 +9,7 @@
 ## Building
 
 ``` bash
+go get -u github.com/davecgh/go-spew/spew
 git clone https://github.com/vacoj/lb-toggle.git
 cd lb-toggle/src/lb-toggle
 go build
