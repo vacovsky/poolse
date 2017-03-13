@@ -31,14 +31,14 @@ go build
             "expected_status_code": 200,  // *required* HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
         },
         {
-            "name": "Expected Example,
+            "name": "Expected Example",
             "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
             "polling_interval": 20,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
             "expected_response_strings": ["{\"is_working\": true}"]
         },
         {
-            "name": "Unexpected Example,
+            "name": "Unexpected Example",
             "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
             "polling_interval": 10,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
