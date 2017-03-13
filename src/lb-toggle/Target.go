@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Target models the information required to perform a status check against an HTTP endpoint at interval
@@ -27,17 +25,18 @@ type Target struct {
 // Monitor initiates the target montitor using target properties
 func (t *Target) Monitor() {
 	defer WG.Done()
-	bodyString := ""
 	for {
+		thisIterState := true
+		bodyString := ""
 		// get response body
 		r, err := http.Get(t.Endpoint)
 
 		// if unable to connect, mark failed and move on
 		if err != nil {
-			defer r.Body.Close()
-			t.OK = false
+			r.Body.Close()
+			thisIterState = false
 		} else {
-			defer r.Body.Close()
+			r.Body.Close()
 			if r.StatusCode == t.ExpectedStatusCode {
 				bodyBytes, err := ioutil.ReadAll(r.Body)
 				if err != nil {
@@ -45,35 +44,40 @@ func (t *Target) Monitor() {
 				}
 				bodyString = string(bodyBytes)
 				if t.ExpectedResponseString != "" {
-					t.validateResultBody(true, bodyString)
+					thisIterState = t.validateResultBody(true, bodyString)
 				}
 				if t.UnexpectedResponseString != "" {
-					t.validateResultBody(false, bodyString)
+					thisIterState = t.validateResultBody(false, bodyString)
 				}
+			} else {
+				thisIterState = false
 			}
 		}
-		if SETTINGS.Service.Debug {
-			spew.Dump(t)
-		}
-		if t.OK {
-			t.LastOK = time.Now()
-		}
+		t.OK = thisIterState
 		t.LastChecked = time.Now()
+		if t.OK {
+			t.LastOK = t.LastChecked
+		}
+		if SETTINGS.Service.Debug {
+			fmt.Println(t.ID, ":::", "OK:", t.OK, ":::", "Last Checked:", t.LastChecked)
+		}
 		// take a snooze
 		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
 	}
 }
 
-func (t *Target) validateResultBody(shouldFind bool, body string) {
-	if strings.Contains(body, t.ExpectedResponseString) && shouldFind {
-		t.OK = true
+func (t *Target) validateResultBody(shouldFind bool, body string) bool {
+	r := false
+	if shouldFind && strings.Contains(body, t.ExpectedResponseString) {
+		r = true
 	} else {
-		t.OK = false
+		r = false
 	}
 
-	if strings.Contains(body, t.UnexpectedResponseString) && !shouldFind {
-		t.OK = false
+	if !shouldFind && strings.Contains(body, t.UnexpectedResponseString) {
+		r = false
 	} else {
-		t.OK = true
+		r = true
 	}
+	return r
 }

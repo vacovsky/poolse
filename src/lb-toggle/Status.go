@@ -12,12 +12,12 @@ type Status struct {
 }
 
 func (s *Status) startMonitor() {
-	for _, target := range STATUS.Targets {
+	for i := range STATUS.Targets {
 		if SETTINGS.Service.Debug {
-			fmt.Println("Starting ", target.Name, target.Endpoint)
+			fmt.Println("Starting ", STATUS.Targets[i].Name, STATUS.Targets[i].Endpoint)
 		}
 		WG.Add(1)
-		go target.Monitor()
+		go STATUS.Targets[i].Monitor()
 	}
 }
 
