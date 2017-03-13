@@ -10,16 +10,16 @@ import (
 
 // Target models the information required to perform a status check against an HTTP endpoint at interval
 type Target struct {
-	ID                       int       `json:"id"`
-	Name                     string    `json:"name"`
-	Endpoint                 string    `json:"endpoint"`
-	PollingInterval          int       `json:"polling_interval"`
-	ExpectedStatusCode       int       `json:"expected_status_code"`
-	ExpectedResponseString   string    `json:"expected_response_string"`
-	UnexpectedResponseString string    `json:"unexpected_response_string"`
-	LastOK                   time.Time `json:"last_ok"`
-	LastChecked              time.Time `json:"last_checked"`
-	OK                       bool      `json:"ok"`
+	ID                        int       `json:"id"`
+	Name                      string    `json:"name"`
+	Endpoint                  string    `json:"endpoint"`
+	PollingInterval           int       `json:"polling_interval"`
+	ExpectedStatusCode        int       `json:"expected_status_code"`
+	ExpectedResponseStrings   []string  `json:"expected_response_strings"`
+	UnexpectedResponseStrings []string  `json:"unexpected_response_strings"`
+	LastOK                    time.Time `json:"last_ok"`
+	LastChecked               time.Time `json:"last_checked"`
+	OK                        bool      `json:"ok"`
 }
 
 // Monitor initiates the target montitor using target properties
@@ -36,48 +36,59 @@ func (t *Target) Monitor() {
 			r.Body.Close()
 			thisIterState = false
 		} else {
-			r.Body.Close()
 			if r.StatusCode == t.ExpectedStatusCode {
 				bodyBytes, err := ioutil.ReadAll(r.Body)
 				if err != nil {
 					fmt.Println(err)
 				}
 				bodyString = string(bodyBytes)
-				if t.ExpectedResponseString != "" {
-					thisIterState = t.validateResultBody(true, bodyString)
-				}
-				if t.UnexpectedResponseString != "" {
-					thisIterState = t.validateResultBody(false, bodyString)
-				}
+				thisIterState = t.validateResultBody(bodyString)
 			} else {
 				thisIterState = false
 			}
 		}
+		r.Body.Close()
+
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
 		if t.OK {
 			t.LastOK = t.LastChecked
 		}
 		if SETTINGS.Service.Debug {
-			fmt.Println(t.ID, ":::", "OK:", t.OK, ":::", "Last Checked:", t.LastChecked)
+			fmt.Println(t.ID, ":::", "Last Checked:", t.LastChecked, t.Name, ":::", "OK:", t.OK)
 		}
 		// take a snooze
 		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
 	}
 }
 
-func (t *Target) validateResultBody(shouldFind bool, body string) bool {
-	r := false
-	if shouldFind && strings.Contains(body, t.ExpectedResponseString) {
-		r = true
-	} else {
-		r = false
-	}
+func (t *Target) validateResultBody(body string) bool {
+	r := true
 
-	if !shouldFind && strings.Contains(body, t.UnexpectedResponseString) {
-		r = false
-	} else {
-		r = true
+	if len(t.ExpectedResponseStrings) > 0 {
+		for s := range t.ExpectedResponseStrings {
+			if SETTINGS.Service.Debug {
+				fmt.Println(body, t.ExpectedResponseStrings[s])
+			}
+			if strings.Contains(body, t.ExpectedResponseStrings[s]) {
+				r = true
+			} else {
+				r = false
+			}
+		}
+	}
+	if len(t.UnexpectedResponseStrings) > 0 {
+		for s := range t.UnexpectedResponseStrings {
+			if SETTINGS.Service.Debug {
+				fmt.Println(body, t.UnexpectedResponseStrings[s])
+			}
+			if strings.Contains(body, t.UnexpectedResponseStrings[s]) {
+				r = false
+			} else {
+				r = true
+			}
+
+		}
 	}
 	return r
 }

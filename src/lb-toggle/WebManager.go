@@ -16,8 +16,9 @@ func startWeb() {
 		"/toggle/off": toggleOffWeb,
 		"/toggle":     toggleWeb,
 
-		"/fakesmoke":  fakeSmoke,
-		"/fakehealth": fakeHealth,
+		"/fakesmoke":    fakeSmoke,
+		"/fakehealth":   fakeHealth,
+		"/fakeexpected": fakeExpected,
 
 		// show landing page?
 		// "/": dashBoard,

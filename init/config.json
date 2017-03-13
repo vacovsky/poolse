@@ -2,16 +2,28 @@
     "targets": [
         {
             "endpoint": "http://localhost:5704/fakehealth",
-            "polling_interval": 5,
+            "polling_interval": 30,
             "expected_status_code": 200
         },
         {
             "name": "FakeSmoke",
             "endpoint": "http://localhost:5704",
-            "polling_interval": 15,
+            "polling_interval": 30,
+            "expected_status_code": 200
+        },
+        {
+            "name": "Expected Example",
+            "endpoint": "http://localhost:5704/fakeexpected",
+            "polling_interval": 30,
             "expected_status_code": 200,
-            "expected_response_string": "",
-            "unexpected_response_string": ""
+            "expected_response_strings": ["\"is_working\": true"]
+        },
+        {
+            "name": "Unexpected Example",
+            "endpoint": "http://localhost:5704/fakeexpected",
+            "polling_interval": 30,
+            "expected_status_code": 200,
+            "unexpected_response_strings": ["\"is_working\": false"]
         }
     ],
     "service": {

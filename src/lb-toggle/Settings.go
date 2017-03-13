@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 //Settings contains the config.json information for configuring the listening port, monitored application details, etc
@@ -42,7 +44,7 @@ func (s *Settings) parseSettingsFile() {
 	s.populateTargets()
 
 	if SETTINGS.Service.Debug {
-		// spew.Dump(SETTINGS)
+		spew.Dump(SETTINGS)
 	}
 }
 

@@ -28,13 +28,27 @@ go build
         {
             "endpoint": "http://localhost:5704/fakehealth",  // url to your application's health endpoint
             "polling_interval": 15,  // polling interval for target endpoint, in seconds
-            "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+            "expected_status_code": 200,  // *required* HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
         },
         {
-            "name": "FakeSmoke"  // Arbitrary - use for your own reasons, or leave it blank.
+            "name": "Expected Example,
+            "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
+            "polling_interval": 20,  // polling interval for target endpoint, in seconds
+            "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+            "expected_response_string": "{\"is_working\": true}"
+        },
+        {
+            "name": "Unexpected Example,
+            "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
+            "polling_interval": 10,  // polling interval for target endpoint, in seconds
+            "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+            "unexpected_response_string": "{\"is_working\": false}"
+        },
+        {
+            "name": "Fake Smoke"  // Arbitrary - use for your own reasons, or leave it blank.
             "endpoint": "http://localhost:5704/fakesmoke",  // url to your application's health endpoint
             "polling_interval": 300,  // polling interval for target endpoint, in seconds
-            "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+            "expected_status_code": 200,  // *required* HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
             "expected_response_string": ""  // response is parsed for this string.  If expected_response_string is blank, check is ignored.  If found, OK is true
             "unexpected_response_string": ""  // response is parsed for this string.  If unexpected_response_string is blank, check is ignored.  If found, OK is false  (an example would be searching repsonse text for {"thisthing": false}, and if found, causes OK to be set to false)
         }
@@ -67,8 +81,9 @@ go build
         "Last": "2017-03-09T12:35:35.24445478-08:00",  // last time the status of the health endpoint was OK
         "Endpoint": "http://pirri.vacovsky.us/login",  // URL to check for status
         "Interval": 300  // interval in seconds between polls
-    }],
-    "Version": 0.2.0  // version of the health check app
+    }
+    ],
+    "Version": "0.2.0"  // version of the health check app
 }
 ```
 
