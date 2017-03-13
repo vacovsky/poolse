@@ -1,78 +1,35 @@
 package main
 
 import (
-	"net/http"
-	"time"
+	"fmt"
 )
 
 // Status indicates the state of the application being monitored
 type Status struct {
-	State        bool
-	HealthStatus struct {
-		OK       bool
-		Last     time.Time
-		Endpoint string
-		Interval int
-	}
-	SmokeStatus struct {
-		OK       bool
-		Last     time.Time
-		Endpoint string
-		Interval int
-	}
+	State   bool
+	Targets []Target
+	Version string
 }
 
-func (s *Status) checkAppSmoke() {
-	r, err := http.Get(SETTINGS.Target.SmokeEndpoint)
-	if err != nil {
-		STATUS.SmokeStatus.OK = false
-	} else {
-		if r.StatusCode == 200 {
-			STATUS.SmokeStatus.OK = true
-			// bodyBytes, err2 := ioutil.ReadAll(r.Body)
-			// bodyString = string(bodyBytes)
-		} else {
-			STATUS.SmokeStatus.OK = false
+func (s *Status) startMonitor() {
+	for i := range STATUS.Targets {
+		if SETTINGS.Service.Debug {
+			fmt.Println("Starting ", STATUS.Targets[i].Name, STATUS.Targets[i].Endpoint)
 		}
-		STATUS.SmokeStatus.Last = time.Now()
-	}
-}
-
-func (s *Status) checkAppHealth() {
-	r, err := http.Get(SETTINGS.Target.HealthEndpoint)
-	if err != nil {
-		STATUS.HealthStatus.OK = false
-	} else {
-		defer r.Body.Close()
-		if r.StatusCode == 200 {
-			STATUS.HealthStatus.OK = true
-		} else {
-			STATUS.HealthStatus.OK = false
-		}
-		STATUS.HealthStatus.Last = time.Now()
-	}
-}
-
-func (s *Status) startHealthMonitor() {
-	for {
-		s.checkAppSmoke()
-		time.Sleep(time.Duration(SETTINGS.Service.HealthInterval) * time.Second)
-	}
-}
-
-func (s *Status) startSmokeMonitor() {
-	for {
-		s.checkAppHealth()
-		time.Sleep(time.Duration(SETTINGS.Service.SmokeInterval) * time.Second)
+		WG.Add(1)
+		go STATUS.Targets[i].Monitor()
 	}
 }
 
 func (s *Status) toggleOn() {
-	s.checkAppHealth()
-	s.checkAppSmoke()
-	if s.SmokeStatus.OK && s.HealthStatus.OK {
-		s.State = true
+	// TODO: check all endpoints, and if all pass the checks, set STATUS.State to true
+	safe := true
+	for _, t := range s.Targets {
+		if !t.OK {
+			safe = false
+		}
 	}
+	s.State = safe
 }
 
 func (s *Status) toggleOff() {
@@ -81,12 +38,24 @@ func (s *Status) toggleOff() {
 
 func (s *Status) toggle() {
 	if !s.State {
-		s.checkAppHealth()
-		s.checkAppSmoke()
-		if s.HealthStatus.OK && s.SmokeStatus.OK {
-			s.State = !s.State
+		safe := true
+		for _, t := range STATUS.Targets {
+			if !t.OK {
+				safe = false
+			}
 		}
+		s.State = safe
 	} else {
-		s.State = !s.State
+		s.State = false
 	}
+}
+
+func (s Status) isOk() bool {
+	ok := true
+	for _, t := range s.Targets {
+		if !t.OK {
+			ok = false
+		}
+	}
+	return ok
 }

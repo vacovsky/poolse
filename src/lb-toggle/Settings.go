@@ -9,14 +9,10 @@ import (
 
 //Settings contains the config.json information for configuring the listening port, monitored application details, etc
 type Settings struct {
-	Target struct {
-		HealthEndpoint string `json:"health_endpoint"` // "health_endpoint": "http://localhost/health",
-		SmokeEndpoint  string `json:"smoke_endpoint"`  // "smoke_endpoint": "http://localhost/health",
-	} `json:"targets"`
+	Targets []Target `json:"targets"`
 	Service struct {
-		HTTPPort       string `json:"http_port"`       // port to listen on for web interface (5704),
-		SmokeInterval  int    `json:"smoke_interval"`  // how frequently to poll endpoint for smoke status
-		HealthInterval int    `json:"health_interval"` // how frequently to poll endpoint for health status
+		HTTPPort string `json:"http_port"` // port to listen on for web interface (5704)
+		Debug    bool   `json:"debug"`
 	} `json:"service"`
 }
 
@@ -42,10 +38,19 @@ func (s *Settings) parseSettingsFile() {
 		fmt.Println("Could not load config file. Check JSON formatting.", err.Error())
 	}
 
-	// Set some properties fromt he config
-	STATUS.HealthStatus.Endpoint = SETTINGS.Target.HealthEndpoint
-	STATUS.HealthStatus.Interval = SETTINGS.Service.HealthInterval
+	// Populate global STATUS with targets from config file
+	s.populateTargets()
 
-	STATUS.SmokeStatus.Endpoint = SETTINGS.Target.SmokeEndpoint
-	STATUS.SmokeStatus.Interval = SETTINGS.Service.SmokeInterval
+	if SETTINGS.Service.Debug {
+		// spew.Dump(SETTINGS)
+	}
+}
+
+func (s *Settings) populateTargets() {
+	STATUS.Version = VERSION
+	for i := range s.Targets {
+		s.Targets[i].ID = i
+		fmt.Println("Initializing:", s.Targets[i].ID, s.Targets[i].PollingInterval, s.Targets[i].Name, s.Targets[i].Endpoint)
+		STATUS.Targets = append(STATUS.Targets, s.Targets[i])
+	}
 }

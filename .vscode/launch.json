@@ -9,12 +9,9 @@
             "remotePath": "",
             "port": 2345,
             "host": "127.0.0.1",
-            "program": "${workspaceRoot}/src/goggle/",
+            "program": "${workspaceRoot}/src/lb-toggle/",
             "env": {
-                "go": {
-                    "gopath": "/Users/joe/Projects/Go"
-                },
-                "GOPATH": "/home/joe/Projects/Go"
+                "GOPATH": "/home/joe/Projects/Go/bin"
             },
             "args": [],
             "showLog": true
