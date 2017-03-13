@@ -7,7 +7,7 @@
         },
         {
             "name": "FakeSmoke",
-            "endpoint": "http://localhost:5704",
+            "endpoint": "http://localhost:5704/fakesmoke",
             "polling_interval": 30,
             "expected_status_code": 200
         },
