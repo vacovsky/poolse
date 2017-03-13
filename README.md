@@ -65,23 +65,62 @@ go build
 
 ``` javascript
 {
-    "State": false,  // If both Health and Smoke are OK, this can be enabled.  If either of the mentioned are *NOT OK*, will be false.  If both endpoints are OK, this can be toggled true and false.
-    "Targets": [{
-        "name": "FakeHealth"
-        "OK": true,  // true if OK, false if BAD
-        "Last": "2017-03-09T12:35:35.24445478-08:00",  // last time the status of the health endpoint was OK
-        "Endpoint": "http://localhost:5704/fakehealth",  // URL to check for status
-        "Interval": 15  // interval in seconds between polls
-    },
-    {
-        "Name": "FakeSmoke"  // Arbitrary - use for your own reasons, or leave it blank.
-        "OK": true,  // true if OK, false if BAD
-        "Last": "2017-03-09T12:35:35.24445478-08:00",  // last time the status of the health endpoint was OK
-        "Endpoint": "http://pirri.vacovsky.us/login",  // URL to check for status
-        "Interval": 300  // interval in seconds between polls
-    }
+    "State": false,
+    "Targets": [
+        {
+            "id": 0,
+            "name": "",
+            "endpoint": "http://localhost:5704/fakehealth",
+            "polling_interval": 30,
+            "expected_status_code": 200,
+            "expected_response_strings": null,
+            "unexpected_response_strings": null,
+            "last_ok": "2017-03-13T10:26:24.193526756-07:00",
+            "last_checked": "2017-03-13T10:26:24.193526756-07:00",
+            "ok": true
+        },
+        {
+            "id": 1,
+            "name": "FakeSmoke",
+            "endpoint": "http://localhost:5704",
+            "polling_interval": 30,
+            "expected_status_code": 200,
+            "expected_response_strings": null,
+            "unexpected_response_strings": null,
+            "last_ok": "0001-01-01T00:00:00Z",
+            "last_checked": "2017-03-13T10:26:24.192933493-07:00",
+            "ok": false
+        },
+        {
+            "id": 2,
+            "name": "Expected Example",
+            "endpoint": "http://localhost:5704/fakeexpected",
+            "polling_interval": 30,
+            "expected_status_code": 200,
+            "expected_response_strings": [
+                "\"is_working\": true"
+            ],
+            "unexpected_response_strings": null,
+            "last_ok": "2017-03-13T10:26:24.193115353-07:00",
+            "last_checked": "2017-03-13T10:26:24.193115353-07:00",
+            "ok": true
+        },
+        {
+            "id": 3,
+            "name": "Unexpected Example",
+            "endpoint": "http://localhost:5704/fakeexpected",
+            "polling_interval": 30,
+            "expected_status_code": 200,
+            "expected_response_strings": null,
+            "unexpected_response_strings": [
+                "\"is_working\": false"
+            ],
+            "last_ok": "2017-03-13T10:26:24.192989776-07:00",
+            "last_checked": "2017-03-13T10:26:24.192989776-07:00",
+            "ok": true
+        }
     ],
-    "Version": "0.2.1"  // version of the health check app
+    "Version": "0.2.1"
 }
 ```
 
