@@ -35,22 +35,20 @@ go build
             "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
             "polling_interval": 20,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
-            "expected_response_string": "{\"is_working\": true}"
+            "expected_response_strings": ["{\"is_working\": true}"]
         },
         {
             "name": "Unexpected Example,
             "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
             "polling_interval": 10,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
-            "unexpected_response_string": "{\"is_working\": false}"
+            "unexpected_response_strings": ["{\"is_working\": false}"] // response is parsed for this string.  If unexpected_response_string is blank, check is ignored.  If found, OK is false  (an example would be searching repsonse text for {"thisthing": false}, and if found, causes OK to be set to false)
         },
         {
             "name": "Fake Smoke"  // Arbitrary - use for your own reasons, or leave it blank.
             "endpoint": "http://localhost:5704/fakesmoke",  // url to your application's health endpoint
             "polling_interval": 300,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // *required* HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
-            "expected_response_string": ""  // response is parsed for this string.  If expected_response_string is blank, check is ignored.  If found, OK is true
-            "unexpected_response_string": ""  // response is parsed for this string.  If unexpected_response_string is blank, check is ignored.  If found, OK is false  (an example would be searching repsonse text for {"thisthing": false}, and if found, causes OK to be set to false)
         }
     ],
     "service": {
@@ -83,7 +81,7 @@ go build
         "Interval": 300  // interval in seconds between polls
     }
     ],
-    "Version": "0.2.0"  // version of the health check app
+    "Version": "0.2.1"  // version of the health check app
 }
 ```
 
@@ -110,6 +108,6 @@ go build
 - If "HealthStatus.OK" and "SmokeStatus.OK" are true, sets "State" to true if "!State".
 - If "State" is true, then sets "State" to false.
 
-### "/fakesmoke" and "/fakehealth"
+### "/fakesmoke", "fakeexpected", and "/fakehealth"
 
-- Fake endpoints that return 200, and are the defaults in the config file.  This is just for POC and testing, but if you don't have a smoke endpoint and do have a health endpoint, leave it to what it's already set to in the config file.
+- Fake endpoints that return 200, maybe some context, and are the defaults in the config file.  This is just for POC and testing, but if you don't have a smoke endpoint and do have a health endpoint, leave it to what it's already set to in the config file, or delete the targets from the config.
