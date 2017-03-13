@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 //Settings contains the config.json information for configuring the listening port, monitored application details, etc
 type Settings struct {
 	Targets []Target `json:"targets"`
 	Service struct {
-		HTTPPort string `json:"http_port"` // port to listen on for web interface (5704),
+		HTTPPort string `json:"http_port"` // port to listen on for web interface (5704)
+		Debug    bool   `json:"debug"`
 	} `json:"service"`
 }
 
@@ -39,9 +42,13 @@ func (s *Settings) parseSettingsFile() {
 
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
+	if SETTINGS.Service.Debug {
+		spew.Dump(SETTINGS)
+	}
 }
 
 func (s *Settings) populateTargets() {
+	STATUS.Version = VERSION
 	for i := range s.Targets {
 		s.Targets[i].ID = i
 		STATUS.Targets = append(STATUS.Targets, s.Targets[i])

@@ -15,6 +15,7 @@
         }
     ],
     "service": {
-        "http_port": "5704"
+        "http_port": "5704",
+        "debug": true
     }
 }

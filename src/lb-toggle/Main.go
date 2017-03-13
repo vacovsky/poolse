@@ -5,7 +5,7 @@ import (
 )
 
 func showVersion() {
-	name := "Goggle " + VERSION
+	name := "LB-Toggle " + VERSION
 	fmt.Println(name)
 }
 
@@ -13,14 +13,13 @@ func main() {
 	SETTINGS.parseSettingsFile()
 
 	// Initialize the wait group so threads don't exit
-	WG.Add(3)
+	WG.Add(1)
 
 	// Start the Web application.
 	go startWeb()
 
 	// Monitor application for health status
-	go STATUS.startHealthMonitor()
-	go STATUS.startSmokeMonitor()
+	STATUS.startMonitor()
 
 	WG.Wait()
 }
