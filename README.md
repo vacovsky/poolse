@@ -127,13 +127,13 @@ go build
 
 ### "/status/simple"
 
-- Returns 503 (Service Unavailable) error if "State", "HealthStatus.OK", or "SmokeStatus.OK" return false.
 - Returns 200 if they all return true.
+- Returns *NO RESPONSE* error if any of the Targets (targets[i].ok) are false.  This is for F5's health monitor.
 
 ### "/status/simple2"
 
-- Returns 200 status when "State", "HealthStatus.OK", and "SmokeStatus.OK" are true.
-- Returns *NO RESPONSE* error if "State", "HealthStatus.OK", or "SmokeStatus.OK" return false.  This is for F5's health monitor.
+- Returns 200 status when "State", and all of the Targets (targets[i].ok) are true.
+- Returns *NO RESPONSE* error if any of the Targets (targets[i].ok) are false.  This is for F5's health monitor.
 
 ### "/toggle/on"
 
