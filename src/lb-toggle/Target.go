@@ -25,7 +25,7 @@ type Target struct {
 // Monitor initiates the target montitor using target properties
 func (t *Target) Monitor() {
 	defer WG.Done()
-	for {
+	for !RELOADSETTINGS {
 		thisIterState := true
 		bodyString := ""
 		// get response body
@@ -87,7 +87,6 @@ func (t *Target) validateResultBody(body string) bool {
 			} else {
 				r = true
 			}
-
 		}
 	}
 	return r

@@ -11,6 +11,7 @@ import (
 
 //Settings contains the config.json information for configuring the listening port, monitored application details, etc
 type Settings struct {
+	State   State    `json:"state"`
 	Targets []Target `json:"targets"`
 	Service struct {
 		HTTPPort string `json:"http_port"` // port to listen on for web interface (5704)

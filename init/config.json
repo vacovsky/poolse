@@ -1,4 +1,6 @@
 {
+    "start_state": "AdminDown",
+    "persist_state": true,
     "targets": [
         {
             "endpoint": "http://localhost:5704/fakehealth",
@@ -16,14 +18,18 @@
             "endpoint": "http://localhost:5704/fakeexpected",
             "polling_interval": 30,
             "expected_status_code": 200,
-            "expected_response_strings": ["\"is_working\": true"]
+            "expected_response_strings": [
+                "\"is_working\": true"
+            ]
         },
         {
             "name": "Unexpected Example",
             "endpoint": "http://localhost:5704/fakeexpected",
             "polling_interval": 30,
             "expected_status_code": 200,
-            "unexpected_response_strings": ["\"is_working\": false"]
+            "unexpected_response_strings": [
+                "\"is_working\": false"
+            ]
         }
     ],
     "service": {

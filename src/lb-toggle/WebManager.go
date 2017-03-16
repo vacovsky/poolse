@@ -13,6 +13,8 @@ func startWeb() {
 
 		// turn on/off application (for benefit of monitor or LB)
 		"/toggle/on":  toggleOnWeb,
+		"/toggle/adminon":  toggleAdminOnWeb,
+		"/toggle/adminoff":  toggleAdminOffWeb,
 		"/toggle/off": toggleOffWeb,
 		"/toggle":     toggleWeb,
 
@@ -20,8 +22,11 @@ func startWeb() {
 		"/fakehealth":   fakeHealth,
 		"/fakeexpected": fakeExpected,
 
+		"/settings":        settingsWeb,
+		"/settings/reload": settingsReloadWeb,
+
 		// show landing page?
-		// "/": dashBoard,
+		"/": statusWeb,
 	}
 
 	// register routes
