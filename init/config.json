@@ -1,6 +1,8 @@
 {
-    "start_state": "AdminDown",
-    "persist_state": true,
+    "state": {
+        "start_state": "AdminDown",
+        "persist_state": true
+    },
     "targets": [
         {
             "endpoint": "http://localhost:5704/fakehealth",

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -33,12 +35,12 @@ func (s *Settings) parseSettingsFile() {
 
 	fileContent, err := os.Open(confFile)
 	if err != nil {
-		fmt.Println("Could not open config file", err.Error())
+		fmt.Println("Could not open config file")
 	}
 
 	jsonParser := json.NewDecoder(fileContent)
 	if err = jsonParser.Decode(&s); err != nil {
-		fmt.Println("Could not load config file. Check JSON formatting.", err.Error())
+		fmt.Println("Could not load config file. Check JSON formatting.")
 	}
 
 	// Populate global STATUS with targets from config file
@@ -56,4 +58,26 @@ func (s *Settings) populateTargets() {
 		fmt.Println("Initializing:", s.Targets[i].ID, s.Targets[i].PollingInterval, s.Targets[i].Name, s.Targets[i].Endpoint)
 		STATUS.Targets = append(STATUS.Targets, s.Targets[i])
 	}
+}
+
+func (s *Settings) reloadSettings() {
+	RELOADSETTINGS = true
+
+	// wait for all target gorountines to exit, leaving only main and http
+	for runtime.NumGoroutine() > 5 {
+		time.Sleep(time.Duration(1) * time.Second)
+	}
+
+	// set tagets to empty slice
+	SETTINGS.Targets = []Target{}
+
+	// repopulate targets from config file, presumably updated with new stuff (this calls popualteTargets)
+	SETTINGS.parseSettingsFile()
+
+	// undo routine kill condition
+	RELOADSETTINGS = false
+
+	// resume motoring with new targets and settings
+	STATUS.startMonitor()
+	WG.Done()
 }

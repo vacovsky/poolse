@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"runtime"
-	"time"
 )
 
 func settingsWeb(rw http.ResponseWriter, req *http.Request) {
@@ -18,29 +16,23 @@ func settingsWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func settingsReloadWeb(rw http.ResponseWriter, req *http.Request) {
-	RELOADSETTINGS = true
 
-	// wait for all target gorountines to exit, leaving only main and http
-	for runtime.NumGoroutine() != 2 {
-		time.Sleep(time.Duration(1) * time.Second)
+	if RELOADSETTINGS {
+		longest := 0
+		for i := range STATUS.Targets {
+			if STATUS.Targets[i].PollingInterval > longest {
+				longest = STATUS.Targets[i].PollingInterval
+			}
+		}
+		io.WriteString(rw, fmt.Sprintf("Settings are still being reloaded. New settings will be applied once the longest-running application monitor checks in.  This could take up to %d seconds.", longest))
+	} else {
+		WG.Add(1)
+		go SETTINGS.reloadSettings()
+		// show caller new settings
+		blob, err := json.Marshal(&SETTINGS)
+		if err != nil {
+			fmt.Println(err, err.Error())
+		}
+		io.WriteString(rw, string(blob))
 	}
-
-	// set tagets to empty slice
-	SETTINGS.Targets = []Target{}
-
-	// repopulate targets from config file, presumably updated with new stuff (this calls popualteTargets)
-	SETTINGS.parseSettingsFile()
-
-	// undo routine kill condition
-	RELOADSETTINGS = false
-
-	// resume motoring with new targets and settings
-	STATUS.startMonitor()
-
-	// show caller new settings
-	blob, err := json.Marshal(&SETTINGS)
-	if err != nil {
-		fmt.Println(err, err.Error())
-	}
-	io.WriteString(rw, string(blob))
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"runtime"
+	"time"
 )
 
 func showVersion() {
@@ -21,5 +23,13 @@ func main() {
 	// Start the Web application.
 	go startWeb()
 
+	for {
+		if SETTINGS.Service.Debug {
+			grc := runtime.NumGoroutine()
+			fmt.Println(grc, "Active goroutines as of", time.Now())
+		}
+		time.Sleep(time.Duration(1) * time.Second)
+
+	}
 	WG.Wait()
 }
