@@ -16,5 +16,5 @@ var SETTINGS Settings
 // STATUS hold the last results of a status poll of the target application
 var STATUS Status
 
-// RELOADSETTINGS is how we tell goroutines to stop and reasses the configuration
-var RELOADSETTINGS bool
+// RTARGETS is how we tell goroutines to stop and reasses the configuration
+var RTARGETS []int

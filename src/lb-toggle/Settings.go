@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"runtime"
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
@@ -61,10 +60,12 @@ func (s *Settings) populateTargets() {
 }
 
 func (s *Settings) reloadSettings() {
-	RELOADSETTINGS = true
+	for i := range s.Targets {
+		RTARGETS = append(RTARGETS, s.Targets[i].ID)
+	}
 
 	// wait for all target gorountines to exit, leaving only main and http
-	for runtime.NumGoroutine() > 5 {
+	for len(RTARGETS) > 0 {
 		time.Sleep(time.Duration(1) * time.Second)
 	}
 
@@ -74,9 +75,6 @@ func (s *Settings) reloadSettings() {
 	// repopulate targets from config file, presumably updated with new stuff
 	// (this calls popualteTargets)
 	SETTINGS.parseSettingsFile()
-
-	// undo routine kill condition
-	RELOADSETTINGS = false
 
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()

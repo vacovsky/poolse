@@ -16,7 +16,7 @@ func settingsWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func settingsReloadWeb(rw http.ResponseWriter, req *http.Request) {
-	if RELOADSETTINGS {
+	if len(RTARGETS) > 0 {
 		longest := 0
 		for i := range STATUS.Targets {
 			if STATUS.Targets[i].PollingInterval > longest {

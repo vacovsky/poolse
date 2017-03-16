@@ -22,10 +22,22 @@ type Target struct {
 	OK                        bool      `json:"ok"`
 }
 
+func (t *Target) shouldReload() bool {
+	ok := false
+	for i := range RTARGETS {
+		if t.ID == RTARGETS[i] {
+			ok = true
+			// remove this index from the reload targets list
+			RTARGETS = append(RTARGETS[:i], RTARGETS[i+1:]...)
+		}
+	}
+	return ok
+}
+
 // Monitor initiates the target montitor using target properties
 func (t *Target) Monitor() {
 	defer WG.Done()
-	for !RELOADSETTINGS {
+	for !t.shouldReload() {
 		thisIterState := true
 		bodyString := ""
 		// get response body
