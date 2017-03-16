@@ -18,3 +18,6 @@ var STATUS Status
 
 // RTARGETS is how we tell goroutines to stop and reasses the configuration
 var RTARGETS []int
+
+// RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
+var RTNULLIFY int

@@ -25,10 +25,12 @@ type Target struct {
 func (t *Target) shouldReload() bool {
 	ok := false
 	for i := range RTARGETS {
-		if t.ID == RTARGETS[i] {
+		if t.ID == RTARGETS[i] && !ok {
 			ok = true
 			// remove this index from the reload targets list
-			RTARGETS = append(RTARGETS[:i], RTARGETS[i+1:]...)
+			// RTARGETS = RTARGETS[:i+copy(RTARGETS[i:], RTARGETS[i+1:])]
+			RTARGETS[i] = -1
+			RTNULLIFY++
 		}
 	}
 	return ok
@@ -72,6 +74,12 @@ func (t *Target) Monitor() {
 		// take a snooze
 		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
 	}
+
+	if RTNULLIFY == len(RTARGETS) {
+		RTARGETS = []int{}
+		RTNULLIFY = 0
+	}
+	return
 }
 
 func (t *Target) validateResultBody(body string) bool {

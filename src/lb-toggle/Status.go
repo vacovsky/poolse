@@ -6,7 +6,7 @@ import (
 
 // Status indicates the state of the application being monitored
 type Status struct {
-	State   bool
+	State   State
 	Targets []Target
 	Version string
 }
@@ -29,24 +29,24 @@ func (s *Status) toggleOn() {
 			safe = false
 		}
 	}
-	s.State = safe
+	s.State.OK = safe
 }
 
 func (s *Status) toggleOff() {
-	s.State = false
+	s.State.OK = false
 }
 
 func (s *Status) toggle() {
-	if !s.State {
+	if !s.State.OK {
 		safe := true
 		for _, t := range STATUS.Targets {
 			if !t.OK {
 				safe = false
 			}
 		}
-		s.State = safe
+		s.State.OK = safe
 	} else {
-		s.State = false
+		s.State.OK = false
 	}
 }
 

@@ -60,7 +60,9 @@ go build
 
 ## API
 
-### "/status"
+### Status Endpoints
+
+#### "/status"
 
 - Shows long-form status to the caller
 
@@ -125,29 +127,51 @@ go build
 }
 ```
 
-### "/status/simple"
+#### "/status/simple"
 
 - Returns 200 if they all return true.
 - Returns *NO RESPONSE* error if any of the Targets (targets[i].ok) are false, or if State is false.  This is for F5's health monitor.
 
-### "/status/simple2"
+#### "/status/simple2"
 
 - Returns 200 status when "State", and all of the Targets (targets[i].ok) are true.
 - Returns *NO RESPONSE* error if any of the Targets (targets[i].ok) are false, or if State is false.  This is for F5's health monitor.
 
-### "/toggle/on"
+### Toggle Endpoints
 
-- If "HealthStatus.OK" and "SmokeStatus.OK" are true, sets "State" to true.
-
-### "/toggle/off"
-
-- Sets "State" to false
-
-### "/toggle"
+#### "/toggle"
 
 - If "HealthStatus.OK" and "SmokeStatus.OK" are true, sets "State" to true if "!State".
 - If "State" is true, then sets "State" to false.
 
-### "/fakesmoke", "fakeexpected", and "/fakehealth"
+#### "/toggle/on"
+
+- If "HealthStatus.OK" and "SmokeStatus.OK" are true, sets "State" to true.
+
+#### "/toggle/off"
+
+- Sets "State" to false
+
+#### "/toggle/adminoff"
+
+- Prevents happy status no matter what else is "OK"
+
+#### "/toggle/adminon"
+
+- Prevents unsuccessful response no matter what else is not "OK"
+
+### Settings Endpoints
+
+#### "/settings"
+
+- Displays currently loaded Settings struct, as populated from the config file.
+
+#### "/settings/reload"
+
+- Reloads configuration file into memory and restarts all target monitors contained within.  A configuration reload generally takes as much time as the longest polling interval present in the targets list, plus 5 seconds.
+
+### Testing Endpoints
+
+#### "/fakesmoke", "fakeexpected", and "/fakehealth"
 
 - Fake endpoints that return 200, maybe some context, and are the defaults in the config file.  This is just for POC and testing, but if you don't have a smoke endpoint and do have a health endpoint, leave it to what it's already set to in the config file, or delete the targets from the config.
