@@ -71,7 +71,8 @@ func (s *Settings) reloadSettings() {
 	// set tagets to empty slice
 	SETTINGS.Targets = []Target{}
 
-	// repopulate targets from config file, presumably updated with new stuff (this calls popualteTargets)
+	// repopulate targets from config file, presumably updated with new stuff
+	// (this calls popualteTargets)
 	SETTINGS.parseSettingsFile()
 
 	// undo routine kill condition

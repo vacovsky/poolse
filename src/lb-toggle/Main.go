@@ -14,9 +14,6 @@ func showVersion() {
 func main() {
 	SETTINGS.parseSettingsFile()
 
-	// Initialize the wait group so threads don't exit
-	WG.Add(1)
-
 	// Monitor application for health status
 	STATUS.startMonitor()
 
@@ -29,7 +26,6 @@ func main() {
 			fmt.Println(grc, "Active goroutines as of", time.Now())
 		}
 		time.Sleep(time.Duration(1) * time.Second)
-
 	}
 	WG.Wait()
 }
