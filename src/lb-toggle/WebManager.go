@@ -12,18 +12,19 @@ func startWeb() {
 		"/status/simple2": statusSimple2Web,
 
 		// turn on/off application (for benefit of monitor or LB)
-		"/toggle/on":  toggleOnWeb,
-		"/toggle/adminon":  toggleAdminOnWeb,
-		"/toggle/adminoff":  toggleAdminOffWeb,
-		"/toggle/off": toggleOffWeb,
-		"/toggle":     toggleWeb,
+		"/toggle/on":         toggleOnWeb,
+		"/toggle/adminon":    toggleAdminStateOnWeb,
+		"/toggle/adminoff":   toggleAdminStateOffWeb,
+		"/toggle/adminreset": toggleResetAdminStateWeb,
+		"/toggle/off":        toggleOffWeb,
+		"/toggle":            toggleWeb,
+
+		"/settings":        settingsWeb,
+		"/settings/reload": settingsReloadWeb,
 
 		"/fakesmoke":    fakeSmoke,
 		"/fakehealth":   fakeHealth,
 		"/fakeexpected": fakeExpected,
-
-		"/settings":        settingsWeb,
-		"/settings/reload": settingsReloadWeb,
 
 		// show landing page?
 		"/": statusWeb,

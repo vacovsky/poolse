@@ -1,9 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 )
 
@@ -22,18 +19,17 @@ func toggleOffWeb(rw http.ResponseWriter, req *http.Request) {
 	statusWeb(rw, req)
 }
 
-func toggleAdminOffWeb(rw http.ResponseWriter, req *http.Request) {
-	blob, err := json.Marshal(&STATUS)
-	if err != nil {
-		fmt.Println(err, err.Error())
-	}
-	io.WriteString(rw, string(blob))
+func toggleAdminStateOffWeb(rw http.ResponseWriter, req *http.Request) {
+	STATUS.toggleAdminStateOff()
+	statusWeb(rw, req)
 }
 
-func toggleAdminOnWeb(rw http.ResponseWriter, req *http.Request) {
-	blob, err := json.Marshal(&STATUS)
-	if err != nil {
-		fmt.Println(err, err.Error())
-	}
-	io.WriteString(rw, string(blob))
+func toggleAdminStateOnWeb(rw http.ResponseWriter, req *http.Request) {
+	STATUS.toggleAdminStateOn()
+	statusWeb(rw, req)
+}
+
+func toggleResetAdminStateWeb(rw http.ResponseWriter, req *http.Request) {
+	STATUS.toggleResetAdminState()
+	statusWeb(rw, req)
 }

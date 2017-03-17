@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+)
+
 // State represents the way the application handles administratively on/off
 type State struct {
 	OK                  bool   `'json:"ok"`                  // value looked at for true app status
@@ -8,12 +14,27 @@ type State struct {
 	AdministrativeState string `json:"administrative_state"` // something
 }
 
-func persistState() {
-	// save administrative_state to file
-
+func (s *State) saveState() {
+	// load administrative_state from file, and impart value to the SETTINGS.State.AdministrativeState field
+	f, err := os.Create("state.dat")
+	defer f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	_, err = f.WriteString(STATUS.State.AdministrativeState)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Issue a Sync to flush writes to stable storage.
+	f.Sync()
 }
 
-func loadState() {
-	// load administrative_state from file, and impart value to the SETTINGS.State.AdministrativeState field
-
+func (s *State) loadState() {
+	// save STATUS.State.AdministrativeState to file
+	v, err := ioutil.ReadFile("state.dat")
+	if err != nil {
+		fmt.Println(err)
+	}
+	s.AdministrativeState = string(v)
+	STATUS.State.AdministrativeState = string(v)
 }

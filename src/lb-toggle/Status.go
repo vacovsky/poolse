@@ -59,3 +59,24 @@ func (s Status) isOk() bool {
 	}
 	return ok
 }
+
+func (s *Status) toggleAdminStateOff() {
+	s.State.AdministrativeState = "AdminOff"
+	if s.State.PersistState {
+		s.State.saveState()
+	}
+}
+
+func (s *Status) toggleAdminStateOn() {
+	s.State.AdministrativeState = "AdminOn"
+	if s.State.PersistState {
+		s.State.saveState()
+	}
+}
+
+func (s *Status) toggleResetAdminState() {
+	s.State.AdministrativeState = ""
+	if s.State.PersistState {
+		s.State.saveState()
+	}
+}

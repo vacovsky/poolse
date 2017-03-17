@@ -43,6 +43,17 @@ func (s *Settings) parseSettingsFile() {
 		fmt.Println("Could not load config file. Check JSON formatting.")
 	}
 
+	// if specified in the config file (), load the state from state.dat and set it to s.State.AdministrativeState
+	if s.State.PersistState {
+		s.State.loadState()
+	}
+
+	// apply the settings state to the STATUS state
+	STATUS.State = SETTINGS.State
+	if STATUS.State.AdministrativeState == "AdminUp" {
+		STATUS.State.OK = true
+	}
+
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
 
@@ -71,12 +82,16 @@ func (s *Settings) reloadSettings() {
 	}
 
 	// set tagets to empty slice
-	SETTINGS.Targets = []Target{}
-	STATUS.Targets = []Target{}
+	SETTINGS = Settings{}
+	STATUS = Status{}
+	if STATUS.State.AdministrativeState == "AdminOn" {
+		STATUS.State.OK = true
+	}
 
 	// repopulate targets from config file, presumably updated with new stuff
 	// (this calls popualteTargets)
 	SETTINGS.parseSettingsFile()
+	STATUS.State = SETTINGS.State
 
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()
