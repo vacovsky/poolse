@@ -164,6 +164,10 @@ go build
 
 - Prevents unsuccessful response no matter what else is not "OK"
 
+#### "/toggle/adminreset"
+
+- Clears state.dat and resets AdministrativeState to empty
+
 ### Settings Endpoints
 
 #### "/settings"
