@@ -12,9 +12,6 @@ func showVersion() {
 func main() {
 	SETTINGS.parseSettingsFile()
 
-	// Initialize the wait group so threads don't exit
-	WG.Add(1)
-
 	// Monitor application for health status
 	STATUS.startMonitor()
 

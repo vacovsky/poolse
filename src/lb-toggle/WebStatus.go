@@ -17,7 +17,7 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
-	if STATUS.isOk() && STATUS.State {
+	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
 		rw.WriteHeader(http.StatusOK)
 	} else {
 		http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
@@ -25,7 +25,7 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
-	if STATUS.isOk() && STATUS.State {
+	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
 		rw.WriteHeader(http.StatusOK)
 	} else {
 		var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
