@@ -25,6 +25,10 @@ go build
 
 ``` javascript
 {
+    "state": {
+        "start_state": "AdminDown",  // If persistent state isn't on, this is the default statup state for the STATUS.
+        "persist_state": true  // indicates whether or not STATUS.State.AdministrativeState should be sticky between settings/application restarts and reloads.
+    },
     "targets": [
         {
             "endpoint": "http://localhost:5704/fakehealth",  // url to your application's health endpoint
