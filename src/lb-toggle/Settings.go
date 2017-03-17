@@ -96,5 +96,10 @@ func (s *Settings) reloadSettings() {
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()
 	time.Sleep(time.Duration(1) * time.Second)
+	if s.State.StartupState {
+		if STATUS.isOk() {
+			s.State.OK = true
+		}
+	}
 	WG.Done()
 }
