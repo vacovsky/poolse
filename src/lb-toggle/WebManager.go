@@ -27,7 +27,7 @@ func startWeb() {
 		"/fakeexpected": fakeExpected,
 
 		// show landing page?
-		"/": statusWeb,
+		"/": statusSimple2Web,
 	}
 
 	// register routes
