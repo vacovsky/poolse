@@ -72,7 +72,12 @@ go build
 
 ``` javascript
 {
-    "State": false,
+    "State": {
+        "OK": false,
+        "startup_state": "",
+        "persist_state": true,
+        "administrative_state": "AdminOff"
+    },
     "Targets": [
         {
             "id": 0,
