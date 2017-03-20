@@ -11,7 +11,7 @@ import (
 // }
 
 func logRequest(r *http.Request) {
-	fmt.Println(SERVEDCOUNT, time.Now(), r.URL.Path[1:])
+	fmt.Println(SERVEDCOUNT, time.Now(), "/"+r.URL.Path[1:])
 }
 
 func startWeb() {
