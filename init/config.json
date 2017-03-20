@@ -36,6 +36,7 @@
     ],
     "service": {
         "http_port": "5704",
-        "debug": true
+        "debug": false,
+        "show_http_log": true
     }
 }

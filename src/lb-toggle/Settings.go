@@ -16,8 +16,9 @@ type Settings struct {
 	Targets    []Target `json:"targets"`
 	LastReload time.Time
 	Service    struct {
-		HTTPPort string `json:"http_port"` // port to listen on for web interface (5704)
-		Debug    bool   `json:"debug"`
+		HTTPPort    string `json:"http_port"` // port to listen on for web interface (5704)
+		Debug       bool   `json:"debug"`
+		ShowHTTPLog bool   `json:"show_http_log"`
 	} `json:"service"`
 }
 

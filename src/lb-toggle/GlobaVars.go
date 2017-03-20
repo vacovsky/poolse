@@ -21,3 +21,6 @@ var RTARGETS []int
 
 // RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
 var RTNULLIFY int
+
+// SERVEDCOUNT is the running counter of requests served
+var SERVEDCOUNT int64
