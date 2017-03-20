@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -42,8 +43,19 @@ func (t *Target) Monitor() {
 	for !t.shouldReload() {
 		thisIterState := true
 		bodyString := ""
+
 		// get response body
-		r, err := http.Get(t.Endpoint)
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", "http://httpbin.org/user-agent", nil)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		req.Header.Set("User-Agent", "LB-Toggle_healthcheck/"+VERSION)
+
+		r, err := client.Do(req)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		// if unable to connect, mark failed and move on
 		if err != nil {

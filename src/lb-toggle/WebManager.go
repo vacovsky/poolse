@@ -1,10 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 )
 
+// func logRequest(handle string, routes map[string]func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+// 	return routes[handle]
+// }
+
+func logRequest(r *http.Request) {
+	fmt.Println(SERVEDCOUNT, r.RemoteAddr, time.Now(), "/"+r.URL.Path[1:])
+}
+
 func startWeb() {
+	SERVEDCOUNT++
 	routes := map[string]func(http.ResponseWriter, *http.Request){
 		// return status
 		"/status":         statusWeb,
@@ -27,7 +38,7 @@ func startWeb() {
 		"/fakeexpected": fakeExpected,
 
 		// show landing page?
-		"/": statusSimple2Web,
+		"/": displayReadme,
 	}
 
 	// register routes

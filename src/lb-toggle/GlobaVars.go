@@ -5,7 +5,7 @@ import (
 )
 
 // VERSION of application
-var VERSION = "0.3.0"
+var VERSION = "0.3.3"
 
 // WG contains list of running goroutines
 var WG sync.WaitGroup
@@ -21,3 +21,6 @@ var RTARGETS []int
 
 // RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
 var RTNULLIFY int
+
+// SERVEDCOUNT is the running counter of requests served
+var SERVEDCOUNT int64

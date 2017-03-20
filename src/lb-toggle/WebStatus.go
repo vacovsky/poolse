@@ -9,6 +9,10 @@ import (
 )
 
 func statusWeb(rw http.ResponseWriter, req *http.Request) {
+	if SETTINGS.Service.ShowHTTPLog {
+		SERVEDCOUNT++
+		logRequest(req)
+	}
 	blob, err := json.Marshal(&STATUS)
 	if err != nil {
 		fmt.Println(err, err.Error())
@@ -17,6 +21,10 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
+	if SETTINGS.Service.ShowHTTPLog {
+		SERVEDCOUNT++
+		logRequest(req)
+	}
 	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
 		rw.WriteHeader(http.StatusOK)
 	} else {
@@ -25,6 +33,10 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
+	if SETTINGS.Service.ShowHTTPLog {
+		SERVEDCOUNT++
+		logRequest(req)
+	}
 	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
 		rw.WriteHeader(http.StatusOK)
 	} else {
