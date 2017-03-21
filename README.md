@@ -58,11 +58,19 @@ go build
     ],
     "service": {
         "http_port": "5704",  // *string not int; port to listen on for incoming web requests
+        "debug": false, // displays certain pieces of data in console if true
+        "show_http_log": true // shows log in console of calls being made if true
     }
 }
 ```
 
 ## API
+
+### Help Endpoints
+
+#### "/"
+
+- Displays README.md to caller
 
 ### Status Endpoints
 

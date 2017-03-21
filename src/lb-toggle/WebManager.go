@@ -15,6 +15,7 @@ func logRequest(r *http.Request) {
 }
 
 func startWeb() {
+	SERVEDCOUNT++
 	routes := map[string]func(http.ResponseWriter, *http.Request){
 		// return status
 		"/status":         statusWeb,
