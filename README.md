@@ -77,6 +77,7 @@ go build
 #### "/status"
 
 - Shows long-form status to the caller
+- All requests to endpoints stemming from "/status" will accept a query string param of ```id``` (example: ```/status/simple?id=1```) to get just the target object at that index; id should correspond to index of target in config file.
 
 ``` javascript
 {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 func statusWeb(rw http.ResponseWriter, req *http.Request) {
@@ -13,11 +14,20 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 		SERVEDCOUNT++
 		logRequest(req)
 	}
-	blob, err := json.Marshal(&STATUS)
-	if err != nil {
-		fmt.Println(err, err.Error())
+	// do we have a query param?
+	req.ParseForm()
+	ppid := req.Form.Get("id")
+	id, err := strconv.Atoi(ppid)
+	if err == nil && id >= 0 && id <= len(STATUS.Targets) {
+		blob, _ := json.Marshal(&STATUS.Targets[id])
+		io.WriteString(rw, string(blob))
+	} else {
+		blob, err := json.Marshal(&STATUS)
+		if err != nil {
+			fmt.Println(err, err.Error())
+		}
+		io.WriteString(rw, string(blob))
 	}
-	io.WriteString(rw, string(blob))
 }
 
 func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
@@ -25,10 +35,21 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 		SERVEDCOUNT++
 		logRequest(req)
 	}
-	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
-		rw.WriteHeader(http.StatusOK)
+	req.ParseForm()
+	ppid := req.Form.Get("id")
+	id, err := strconv.Atoi(ppid)
+	if err == nil && id >= 0 && id <= len(STATUS.Targets) {
+		if (STATUS.Targets[id].OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
+			rw.WriteHeader(http.StatusOK)
+		} else {
+			http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+		}
 	} else {
-		http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+		if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
+			rw.WriteHeader(http.StatusOK)
+		} else {
+			http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+		}
 	}
 }
 
@@ -37,10 +58,22 @@ func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
 		SERVEDCOUNT++
 		logRequest(req)
 	}
-	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
-		rw.WriteHeader(http.StatusOK)
+	req.ParseForm()
+	ppid := req.Form.Get("id")
+	id, err := strconv.Atoi(ppid)
+	if err == nil && id >= 0 && id <= len(STATUS.Targets) {
+		if (STATUS.Targets[id].OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
+			rw.WriteHeader(http.StatusOK)
+		} else {
+			var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
+			panic(err)
+		}
 	} else {
-		var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
-		panic(err)
+		if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
+			rw.WriteHeader(http.StatusOK)
+		} else {
+			var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
+			panic(err)
+		}
 	}
 }
