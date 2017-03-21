@@ -26,7 +26,8 @@ go build
 ``` javascript
 {
     "state": {
-        "start_state": "AdminDown",  // If persistent state isn't on, this is the default statup state for the STATUS.  If will only be OK if all Targets are also OK on first check
+        "startup_state": true, // if true, when server starts, if first check passes server state is marked OK
+        "administrative_state": "AdminOff",  // If persistent state isn't on, this is the default statup state for the STATUS.  If will only be OK if all Targets are also OK on first check
         "persist_state": true  // indicates whether or not STATUS.State.AdministrativeState should be sticky between settings/application restarts and reloads.
     },
     "targets": [
@@ -83,7 +84,7 @@ go build
 {
     "State": {
         "OK": false,
-        "startup_state": "",
+        "startup_state": bool,
         "persist_state": true,
         "administrative_state": "AdminOff"
     },
