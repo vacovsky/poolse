@@ -10,8 +10,8 @@
 
 ``` bash
 go get -u github.com/davecgh/go-spew/spew
-git clone https://github.com/vacoj/lb-toggle.git
-cd lb-toggle/src/lb-toggle
+git clone https://github.com/vacoj/go-healthcheck.git
+cd go-healthcheck/src/go-healthcheck
 go build
 ```
 
@@ -20,7 +20,7 @@ go build
 - To start with a specific configuration file, just execute like this
 
 ``` bash
-./lb-toggle /path/to/config.json
+./go-healthcheck /path/to/config.json
 ```
 
 ``` javascript
