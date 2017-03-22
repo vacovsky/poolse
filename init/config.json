@@ -1,6 +1,6 @@
 {
     "state": {
-        "start_state": false,
+        "startup_state": false,
         "persist_state": true
     },
     "targets": [
