@@ -1,10 +1,10 @@
 # Go-Healthcheck
 
-- Provides a monitorable status and toggle switch for load balanced applications, especially those with health and smoke endpoints.
+- Provides a monitorable application healthcheck & status endpoint, as well as a "toggle switch" for soft upping and downing of monitored applications.
 
-- Enables Operations to easily enable and disable a web application with simple http control endpoints.
+- Enables automation and operations personnel to easily enable and disable an upstream node/application with simple http control endpoints.
 
-- JSON formatted status results allow for easy status monitoring of app status.
+- JSON formatted status results allow for easy status monitoring of app status from external monitoring tools.
 
 - Provides a common format/interface for managing applications which are behind some form of reverse proxy or load balancer that checks at interval for server health status.
 
