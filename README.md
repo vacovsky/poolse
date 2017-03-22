@@ -4,7 +4,7 @@
 
 - Enables automation and operations personnel to easily enable and disable an upstream node/application with simple http control endpoints.
 
-- JSON formatted status results allow for easy status monitoring of app status from external monitoring tools.
+- JSON formatted status results allow for easy status monitoring of target applications from external monitoring tools.  Can be on a different system than the monitored application.
 
 - Provides a common format/interface for managing applications which are behind some form of reverse proxy or load balancer that checks at interval for server health status.
 
