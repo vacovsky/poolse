@@ -38,8 +38,7 @@ func TestToggleFailsBecauseHealthStatusIsFalse(*testing.T) {
 			},
 		},
 	}
-
-	// STATUS.toggle()
+	STATUS.toggle()
 
 	fmt.Println(STATUS.State)
 	// Output:
