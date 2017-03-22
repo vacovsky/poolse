@@ -8,10 +8,16 @@ import (
 // TestToggleOff ensures the Status object is off when
 // it is manually set to off through the method
 func TestToggleOff(*testing.T) {
-	STATUS = Status{}
-	STATUS.State = true
-	STATUS.HealthStatus.OK = true
-	STATUS.SmokeStatus.OK = true
+	STATUS = Status{
+		State: State{
+			OK: true,
+		},
+		Targets: []Target{
+			Target{
+				OK: true,
+			},
+		},
+	}
 
 	STATUS.toggleOff()
 
@@ -22,10 +28,16 @@ func TestToggleOff(*testing.T) {
 
 // TestToggleFailsBecauseHealthStatusIsFalse
 func TestToggleFailsBecauseHealthStatusIsFalse(*testing.T) {
-	STATUS = Status{}
-	STATUS.State = false
-	STATUS.HealthStatus.OK = false
-	STATUS.SmokeStatus.OK = true
+	STATUS = Status{
+		State: State{
+			OK: true,
+		},
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
+		},
+	}
 
 	// STATUS.toggle()
 
