@@ -90,7 +90,7 @@ func (t *Target) Monitor() {
 		if thisIterState {
 			t.DownCount = 0
 			t.UpCount++
-			if t.UpCount > t.UpCountThreshold && t.UpCountThreshold > 0 {
+			if t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0 {
 				thisIterState = true
 			} else {
 				thisIterState = false
@@ -98,7 +98,7 @@ func (t *Target) Monitor() {
 		} else {
 			t.UpCount = 0
 			t.DownCount++
-			if t.DownCount > t.DownCountThreshold && t.DownCountThreshold > 0 {
+			if t.DownCount >= t.DownCountThreshold && t.DownCountThreshold > 0 {
 				thisIterState = false
 			} else {
 				thisIterState = true

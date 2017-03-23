@@ -5,7 +5,7 @@ import (
 )
 
 // VERSION of application
-var VERSION = "0.3.10"
+var VERSION = "0.3.11"
 
 // WG contains list of running goroutines
 var WG sync.WaitGroup
