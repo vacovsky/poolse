@@ -37,20 +37,26 @@ go build
             "endpoint": "http://localhost:5704/fakehealth",  // url to your application's health endpoint
             "polling_interval": 15,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // *required* HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
+            "up_count_threshold": 10, // this many failed checks will mark target as online
+            "down_count_threshold": 10 // this many failed checks will mark target as offline
         },
         {
             "name": "Expected Example",
             "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
             "polling_interval": 20,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
-            "expected_response_strings": ["{\"is_working\": true}"]
+            "expected_response_strings": ["{\"is_working\": true}"],
+            "up_count_threshold": 10, // this many failed checks will mark target as online
+            "down_count_threshold": 10 // this many failed checks will mark target as offline
         },
         {
             "name": "Unexpected Example",
             "endpoint": "http://localhost:5704/fakeexpected",  // url to your application's health endpoint
             "polling_interval": 10,  // polling interval for target endpoint, in seconds
             "expected_status_code": 200,  // HTTP status code to look for.  If this isn't returned when the check happens, we mark OK as false.
-            "unexpected_response_strings": ["{\"is_working\": false}"] // response is parsed for this string.  If unexpected_response_string is blank, check is ignored.  If found, OK is false  (an example would be searching repsonse text for {"thisthing": false}, and if found, causes OK to be set to false)
+            "unexpected_response_strings": ["{\"is_working\": false}"], // response is parsed for this string.  If unexpected_response_string is blank, check is ignored.  If found, OK is false  (an example would be searching repsonse text for {"thisthing": false}, and if found, causes OK to be set to false)
+            "up_count_threshold": 10, // this many failed checks will mark target as online
+            "down_count_threshold": 10 // this many failed checks will mark target as offline
         },
         {
             "name": "Fake Smoke"  // Arbitrary - use for your own reasons, or leave it blank.
@@ -85,66 +91,30 @@ go build
 ``` javascript
 {
     "State": {
-        "OK": false,
-        "startup_state": bool,
+        "ok": true,
+        "startup_state": true,
         "persist_state": true,
-        "administrative_state": "AdminOff"
+        "administrative_state": ""
     },
     "Targets": [
         {
             "id": 0,
             "name": "",
-            "endpoint": "http://localhost:5704/fakehealth",
-            "polling_interval": 30,
+            "endpoint": "http://localhost",
+            "polling_interval": 5,
             "expected_status_code": 200,
             "expected_response_strings": null,
             "unexpected_response_strings": null,
-            "last_ok": "2017-03-13T10:26:24.193526756-07:00",
-            "last_checked": "2017-03-13T10:26:24.193526756-07:00",
-            "ok": true
-        },
-        {
-            "id": 1,
-            "name": "FakeSmoke",
-            "endpoint": "http://localhost:5704",
-            "polling_interval": 30,
-            "expected_status_code": 200,
-            "expected_response_strings": null,
-            "unexpected_response_strings": null,
-            "last_ok": "0001-01-01T00:00:00Z",
-            "last_checked": "2017-03-13T10:26:24.192933493-07:00",
-            "ok": false
-        },
-        {
-            "id": 2,
-            "name": "Expected Example",
-            "endpoint": "http://localhost:5704/fakeexpected",
-            "polling_interval": 30,
-            "expected_status_code": 200,
-            "expected_response_strings": [
-                "\"is_working\": true"
-            ],
-            "unexpected_response_strings": null,
-            "last_ok": "2017-03-13T10:26:24.193115353-07:00",
-            "last_checked": "2017-03-13T10:26:24.193115353-07:00",
-            "ok": true
-        },
-        {
-            "id": 3,
-            "name": "Unexpected Example",
-            "endpoint": "http://localhost:5704/fakeexpected",
-            "polling_interval": 30,
-            "expected_status_code": 200,
-            "expected_response_strings": null,
-            "unexpected_response_strings": [
-                "\"is_working\": false"
-            ],
-            "last_ok": "2017-03-13T10:26:24.192989776-07:00",
-            "last_checked": "2017-03-13T10:26:24.192989776-07:00",
-            "ok": true
+            "last_ok": "2017-03-23T08:30:51.1019184-07:00",
+            "last_checked": "2017-03-23T08:30:51.1019184-07:00",
+            "ok": true,
+            "up_count": 6987,
+            "up_count_threshold": 10,
+            "down_count": 0,
+            "down_count_threshold": 1
         }
     ],
-    "Version": "0.2.1"
+    "Version": "0.3.10"
 }
 ```
 
