@@ -51,9 +51,6 @@ func (s *Settings) parseSettingsFile() {
 
 	// apply the settings state to the STATUS state
 	STATUS.State = SETTINGS.State
-	if STATUS.State.AdministrativeState == "AdminUp" {
-		STATUS.State.OK = true
-	}
 
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
@@ -61,6 +58,7 @@ func (s *Settings) parseSettingsFile() {
 	if SETTINGS.Service.Debug {
 		spew.Dump(SETTINGS)
 	}
+
 }
 
 func (s *Settings) populateTargets() {
@@ -97,10 +95,14 @@ func (s *Settings) reloadSettings() {
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()
 	time.Sleep(time.Duration(1) * time.Second)
+
 	if s.State.StartupState {
+		// give the targets a bit to catch up
+		time.Sleep(time.Duration(len(s.Targets)) * time.Second)
 		if STATUS.isOk() {
-			s.State.OK = true
+			STATUS.State.OK = true
 		}
 	}
+
 	WG.Done()
 }

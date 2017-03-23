@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func showVersion() {
@@ -17,6 +18,14 @@ func main() {
 
 	// Start the Web application.
 	go startWeb()
+
+	if SETTINGS.State.StartupState {
+		// give the targets a bit to catch up
+		time.Sleep(time.Duration(len(STATUS.Targets)) * time.Second)
+		if STATUS.isOk() {
+			STATUS.State.OK = true
+		}
+	}
 
 	WG.Wait()
 }
