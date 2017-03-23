@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -21,6 +20,10 @@ type Target struct {
 	LastOK                    time.Time `json:"last_ok"`
 	LastChecked               time.Time `json:"last_checked"`
 	OK                        bool      `json:"ok"`
+	UpCount                   int64     `json:"up_count"`
+	UpCountThreshold          int64     `json:"up_count_threshold"` // this many UpCounts before marked OK again
+	DownCount                 int64     `json:"down_count"`
+	DownCountThreshold        int64     `json:"down_count_threshold"` // this many DownCounts before marked offline
 }
 
 func (t *Target) shouldReload() bool {
@@ -48,13 +51,19 @@ func (t *Target) Monitor() {
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", t.Endpoint, nil)
 		if err != nil {
-			log.Fatalln(err)
+			if SETTINGS.Service.Debug {
+				fmt.Println(err)
+			}
+			thisIterState = false
 		}
 		req.Header.Set("User-Agent", "Go-Healthcheck/"+VERSION)
 
 		r, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			if SETTINGS.Service.Debug {
+				fmt.Println(err)
+			}
+			thisIterState = false
 		}
 
 		// if unable to connect, mark failed and move on
@@ -75,11 +84,30 @@ func (t *Target) Monitor() {
 		}
 		r.Body.Close()
 
+		if thisIterState {
+			t.DownCount = 0
+			t.UpCount++
+			if t.UpCount > t.UpCountThreshold && t.UpCountThreshold > 0 {
+				thisIterState = true
+			} else {
+				thisIterState = false
+			}
+		} else {
+			t.UpCount = 0
+			t.DownCount++
+			if t.DownCount > t.DownCountThreshold && t.DownCountThreshold > 0 {
+				thisIterState = false
+			} else {
+				thisIterState = true
+			}
+		}
+
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
 		if t.OK {
 			t.LastOK = t.LastChecked
 		}
+
 		if SETTINGS.Service.Debug {
 			fmt.Println(t.ID, ":::", "Last Checked:", t.LastChecked, t.Name, ":::", "OK:", t.OK)
 		}
@@ -90,6 +118,13 @@ func (t *Target) Monitor() {
 	if RTNULLIFY == len(RTARGETS) {
 		RTARGETS = []int{}
 		RTNULLIFY = 0
+	}
+
+	if t.DownCount > 2147483640 {
+		t.DownCount = 0
+	}
+	if t.UpCount > 2147483640 {
+		t.UpCount = 0
 	}
 	return
 }
