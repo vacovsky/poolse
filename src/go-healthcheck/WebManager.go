@@ -10,8 +10,9 @@ import (
 // 	return routes[handle]
 // }
 
-func logRequest(r *http.Request) {
-	fmt.Println(SERVEDCOUNT, r.RemoteAddr, time.Now(), "/"+r.URL.Path[1:])
+func logRequest(r *http.Request, result bool) {
+	SERVEDCOUNT++
+	fmt.Println(SERVEDCOUNT, r.RemoteAddr, time.Now(), "/"+r.URL.Path[1:], " OK: ", result)
 }
 
 func startWeb() {
