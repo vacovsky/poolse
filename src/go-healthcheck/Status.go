@@ -80,3 +80,17 @@ func (s *Status) toggleResetAdminState() {
 		s.State.saveState()
 	}
 }
+
+func (s *Status) checkStatusByID(id int) bool {
+	if (STATUS.Targets[id].OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
+		return true
+	}
+	return false
+}
+
+func (s *Status) checkStatus() bool {
+	if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
+		return true
+	}
+	return false
+}

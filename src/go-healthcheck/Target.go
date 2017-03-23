@@ -46,11 +46,11 @@ func (t *Target) Monitor() {
 
 		// get response body
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", "http://httpbin.org/user-agent", nil)
+		req, err := http.NewRequest("GET", t.Endpoint, nil)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		req.Header.Set("User-Agent", "LB-Toggle_healthcheck/"+VERSION)
+		req.Header.Set("User-Agent", "Go-Healthcheck/"+VERSION)
 
 		r, err := client.Do(req)
 		if err != nil {
