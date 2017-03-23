@@ -55,6 +55,12 @@ func (s *Settings) parseSettingsFile() {
 		STATUS.State.OK = true
 	}
 
+	if s.State.StartupState {
+		if STATUS.isOk() {
+			STATUS.State.OK = true
+		}
+	}
+
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
 
@@ -99,7 +105,7 @@ func (s *Settings) reloadSettings() {
 	time.Sleep(time.Duration(1) * time.Second)
 	if s.State.StartupState {
 		if STATUS.isOk() {
-			s.State.OK = true
+			STATUS.State.OK = true
 		}
 	}
 	WG.Done()
