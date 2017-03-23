@@ -68,7 +68,7 @@ func (t *Target) Monitor() {
 
 		// if unable to connect, mark failed and move on
 		if err != nil {
-			if r.Body != nil {
+			if r != nil && r.Body != nil {
 				r.Body.Close()
 			}
 			thisIterState = false
@@ -84,7 +84,7 @@ func (t *Target) Monitor() {
 				thisIterState = false
 			}
 		}
-		if r.Body != nil {
+		if r != nil && r.Body != nil {
 			r.Body.Close()
 		}
 		if thisIterState {
