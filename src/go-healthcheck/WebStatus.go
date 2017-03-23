@@ -31,25 +31,27 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
+	result := false
+	id := -1
+
 	if SETTINGS.Service.ShowHTTPLog {
 		SERVEDCOUNT++
 		logRequest(req)
 	}
 	req.ParseForm()
 	ppid := req.Form.Get("id")
-	id, err := strconv.Atoi(ppid)
-	if err == nil && id >= 0 && id <= len(STATUS.Targets) {
-		if (STATUS.Targets[id].OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
-			rw.WriteHeader(http.StatusOK)
-		} else {
-			http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
-		}
+	id, err = strconv.Atoi(ppid)
+
+	if err == nil && id >= 0 && id < len(STATUS.Targets) {
+		result = STATUS.checkStatusByID(id)
 	} else {
-		if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
-			rw.WriteHeader(http.StatusOK)
-		} else {
-			http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
-		}
+		result = STATUS.checkStatus()
+	}
+
+	if result {
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
 	}
 }
 

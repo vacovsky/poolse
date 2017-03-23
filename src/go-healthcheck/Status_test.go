@@ -18,10 +18,9 @@ func TestToggleOff(*testing.T) {
 			},
 		},
 	}
-
 	STATUS.toggleOff()
-
 	fmt.Println(STATUS.State)
+
 	// Output:
 	// false
 }
@@ -78,12 +77,15 @@ func TestToggleAdminOn(*testing.T) {
 	}
 	STATUS.toggleAdminStateOn()
 	fmt.Println(STATUS.State.AdministrativeState)
+	fmt.Println(STATUS.checkStatus())
+
 	// Output:
 	// "AdminOn"
+	// true
 }
 
-// TestToggleAdminReset
-func TestToggleAdminReset(*testing.T) {
+// TestToggleAdminResetWithOK
+func TestToggleAdminResetWithOK(*testing.T) {
 	STATUS = Status{
 		State: State{
 			AdministrativeState: "AdminOff",
@@ -97,6 +99,91 @@ func TestToggleAdminReset(*testing.T) {
 	}
 	STATUS.toggleResetAdminState()
 	fmt.Println(STATUS.State.AdministrativeState)
+	fmt.Println(STATUS.checkStatus())
+
 	// Output:
 	// ""
+	// true
+}
+
+// TestToggleAdminResetWithoutOK
+func TestToggleAdminResetWithoutOK(*testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "AdminOff",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
+		},
+	}
+	STATUS.toggleResetAdminState()
+	fmt.Println(STATUS.State.AdministrativeState)
+	fmt.Println(STATUS.checkStatus())
+	// Output:
+	// ""
+	// false
+}
+
+// TestStatusOfSingleTargetByIDWithAdminReset
+func TestStatusOfSingleTargetByIDWithAdminReset(*testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "AdminOn",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
+		},
+	}
+	STATUS.toggleAdminStateOff()
+	fmt.Println(STATUS.State.AdministrativeState)
+	fmt.Println(STATUS.checkStatusByID(0))
+	// Output:
+	// ""
+	// true
+}
+
+// TestStatusOfSingleTargetByIDWithAdminOn
+func TestStatusOfSingleTargetByIDWithAdminOn(*testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
+		},
+	}
+	STATUS.toggleResetAdminState()
+	fmt.Println(STATUS.State.AdministrativeState)
+	fmt.Println(STATUS.checkStatus())
+	// Output:
+	// ""
+	// true
+}
+
+// TestStatusOfSingleTargetByIDWithAdminOff
+func TestStatusOfSingleTargetByIDWithAdminOff(*testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: true,
+			},
+		},
+	}
+	STATUS.toggleAdminStateOff()
+	fmt.Println(STATUS.checkStatusByID(0))
+	// Output:
+	// false
 }
