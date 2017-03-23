@@ -3,49 +3,47 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 )
 
 func statusWeb(rw http.ResponseWriter, req *http.Request) {
-	if SETTINGS.Service.ShowHTTPLog {
-		SERVEDCOUNT++
-		logRequest(req)
-	}
-	// do we have a query param?
+	result := false
+	var blob []byte
+
 	req.ParseForm()
 	ppid := req.Form.Get("id")
 	id, err := strconv.Atoi(ppid)
-	if err == nil && id >= 0 && id <= len(STATUS.Targets) {
-		blob, _ := json.Marshal(&STATUS.Targets[id])
-		io.WriteString(rw, string(blob))
+
+	if err == nil && id >= 0 && id < len(STATUS.Targets) && len(STATUS.Targets) > 0 {
+		blob, _ = json.Marshal(&STATUS.Targets[id])
 	} else {
-		blob, err := json.Marshal(&STATUS)
-		if err != nil {
-			fmt.Println(err, err.Error())
-		}
-		io.WriteString(rw, string(blob))
+		blob, _ = json.Marshal(&STATUS)
 	}
+
+	if SETTINGS.Service.ShowHTTPLog {
+		logRequest(req, result)
+	}
+
+	io.WriteString(rw, string(blob))
 }
 
 func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 	result := false
-	id := -1
 
-	if SETTINGS.Service.ShowHTTPLog {
-		SERVEDCOUNT++
-		logRequest(req)
-	}
 	req.ParseForm()
 	ppid := req.Form.Get("id")
-	id, err = strconv.Atoi(ppid)
+	id, err := strconv.Atoi(ppid)
 
-	if err == nil && id >= 0 && id < len(STATUS.Targets) {
+	if err == nil && id >= 0 && id < len(STATUS.Targets) && len(STATUS.Targets) > 0 {
 		result = STATUS.checkStatusByID(id)
 	} else {
 		result = STATUS.checkStatus()
+	}
+
+	if SETTINGS.Service.ShowHTTPLog {
+		logRequest(req, result)
 	}
 
 	if result {
@@ -53,29 +51,30 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 	} else {
 		http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
 	}
+
 }
 
 func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
-	if SETTINGS.Service.ShowHTTPLog {
-		SERVEDCOUNT++
-		logRequest(req)
-	}
+	result := false
+
 	req.ParseForm()
 	ppid := req.Form.Get("id")
 	id, err := strconv.Atoi(ppid)
-	if err == nil && id >= 0 && id <= len(STATUS.Targets) {
-		if (STATUS.Targets[id].OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
-			rw.WriteHeader(http.StatusOK)
-		} else {
-			var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
-			panic(err)
-		}
+
+	if err == nil && id >= 0 && id < len(STATUS.Targets) && len(STATUS.Targets) > 0 {
+		result = STATUS.checkStatusByID(id)
 	} else {
-		if (STATUS.isOk() && STATUS.State.OK && !(STATUS.State.AdministrativeState == "AdminOff")) || STATUS.State.AdministrativeState == "AdminOn" {
-			rw.WriteHeader(http.StatusOK)
-		} else {
-			var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
-			panic(err)
-		}
+		result = STATUS.checkStatus()
+	}
+
+	if SETTINGS.Service.ShowHTTPLog {
+		logRequest(req, result)
+	}
+
+	if result {
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		var err = errors.New("intentionally erroring for sake of not returning anything to the caller")
+		panic(err)
 	}
 }

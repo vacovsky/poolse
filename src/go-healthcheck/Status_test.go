@@ -7,7 +7,7 @@ import (
 
 // TestToggleOff ensures the Status object is off when
 // it is manually set to off through the method
-func TestToggleOff(*testing.T) {
+func TestToggleOff(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			OK: true,
@@ -19,14 +19,13 @@ func TestToggleOff(*testing.T) {
 		},
 	}
 	STATUS.toggleOff()
-	fmt.Println(STATUS.State)
-
-	// Output:
-	// false
+	if STATUS.State.OK != false {
+		t.Errorf("State.OK should return false, but returned true.")
+	}
 }
 
 // TestToggleFailsBecauseHealthStatusIsFalse
-func TestToggleFailsBecauseHealthStatusIsFalse(*testing.T) {
+func TestToggleFailsBecauseHealthStatusIsFalse(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			OK: true,
@@ -38,13 +37,15 @@ func TestToggleFailsBecauseHealthStatusIsFalse(*testing.T) {
 		},
 	}
 	STATUS.toggle()
-	fmt.Println(STATUS.State)
-	// Output:
-	// false
+	fmt.Println(STATUS.State.OK)
+
+	if STATUS.checkStatus() != false {
+		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
+	}
 }
 
 // TestToggleAdminOff
-func TestToggleAdminOff(*testing.T) {
+func TestToggleAdminOff(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			AdministrativeState: "AdminOn",
@@ -57,13 +58,16 @@ func TestToggleAdminOff(*testing.T) {
 		},
 	}
 	STATUS.toggleAdminStateOff()
-	fmt.Println(STATUS.State.AdministrativeState)
-	// Output:
-	// "AdminOff"
+	if STATUS.State.AdministrativeState != "AdminOff" {
+		t.Errorf("State.AdministrativeState should return \"AdminOff\", but returned " + STATUS.State.AdministrativeState)
+	}
+	if STATUS.checkStatus() != false {
+		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
+	}
 }
 
 // TestToggleAdminOn
-func TestToggleAdminOn(*testing.T) {
+func TestToggleAdminOn(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			AdministrativeState: "AdminOff",
@@ -76,19 +80,63 @@ func TestToggleAdminOn(*testing.T) {
 		},
 	}
 	STATUS.toggleAdminStateOn()
-	fmt.Println(STATUS.State.AdministrativeState)
-	fmt.Println(STATUS.checkStatus())
-
-	// Output:
-	// "AdminOn"
-	// true
+	if STATUS.State.AdministrativeState != "AdminOn" {
+		t.Errorf("State.AdministrativeState should return \"AdminOn\", but returned " + STATUS.State.AdministrativeState)
+	}
+	if STATUS.checkStatus() != true {
+		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
+	}
 }
 
 // TestToggleAdminResetWithOK
-func TestToggleAdminResetWithOK(*testing.T) {
+func TestToggleAdminResetWithOK(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			AdministrativeState: "AdminOff",
+			OK:                  true,
+		},
+		Targets: []Target{
+			Target{
+				OK: true,
+			},
+		},
+	}
+	STATUS.toggleResetAdminState()
+	if STATUS.State.AdministrativeState != "" {
+		t.Errorf("State.AdministrativeState should return \"\", but returned " + STATUS.State.AdministrativeState)
+	}
+	if STATUS.checkStatus() != true {
+		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
+	}
+}
+
+// TestToggleAdminResetWithoutOK
+func TestToggleAdminResetWithoutOK(t *testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "AdminOff",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
+		},
+	}
+	STATUS.toggleResetAdminState()
+	if STATUS.State.AdministrativeState != "" {
+		t.Errorf("State.AdministrativeState should return \"\", but returned " + STATUS.State.AdministrativeState)
+	}
+	if STATUS.checkStatus() != false {
+		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
+	}
+}
+
+// TestStatusOfSingleTargetByIDWithAdminReset
+func TestStatusOfSingleTargetByIDWithAdminReset(t *testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "AdminOn",
 			OK:                  true,
 		},
 		Targets: []Target{
@@ -98,58 +146,16 @@ func TestToggleAdminResetWithOK(*testing.T) {
 		},
 	}
 	STATUS.toggleResetAdminState()
-	fmt.Println(STATUS.State.AdministrativeState)
-	fmt.Println(STATUS.checkStatus())
-
-	// Output:
-	// ""
-	// true
-}
-
-// TestToggleAdminResetWithoutOK
-func TestToggleAdminResetWithoutOK(*testing.T) {
-	STATUS = Status{
-		State: State{
-			AdministrativeState: "AdminOff",
-			OK:                  false,
-		},
-		Targets: []Target{
-			Target{
-				OK: false,
-			},
-		},
+	if STATUS.State.AdministrativeState != "" {
+		t.Errorf("State.AdministrativeState should return \"\", but returned " + STATUS.State.AdministrativeState)
 	}
-	STATUS.toggleResetAdminState()
-	fmt.Println(STATUS.State.AdministrativeState)
-	fmt.Println(STATUS.checkStatus())
-	// Output:
-	// ""
-	// false
-}
-
-// TestStatusOfSingleTargetByIDWithAdminReset
-func TestStatusOfSingleTargetByIDWithAdminReset(*testing.T) {
-	STATUS = Status{
-		State: State{
-			AdministrativeState: "AdminOn",
-			OK:                  false,
-		},
-		Targets: []Target{
-			Target{
-				OK: false,
-			},
-		},
+	if STATUS.checkStatusByID(0) != false {
+		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
 	}
-	STATUS.toggleAdminStateOff()
-	fmt.Println(STATUS.State.AdministrativeState)
-	fmt.Println(STATUS.checkStatusByID(0))
-	// Output:
-	// ""
-	// true
 }
 
 // TestStatusOfSingleTargetByIDWithAdminOn
-func TestStatusOfSingleTargetByIDWithAdminOn(*testing.T) {
+func TestStatusOfSingleTargetByIDWithAdminOn(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			AdministrativeState: "",
@@ -161,16 +167,18 @@ func TestStatusOfSingleTargetByIDWithAdminOn(*testing.T) {
 			},
 		},
 	}
-	STATUS.toggleResetAdminState()
-	fmt.Println(STATUS.State.AdministrativeState)
+	STATUS.toggleAdminStateOn()
+	if STATUS.State.AdministrativeState != "AdminOn" {
+		t.Errorf("State.AdministrativeState should return \"AdminOn\", but returned " + STATUS.State.AdministrativeState)
+	}
+	if STATUS.checkStatusByID(0) != true {
+		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
+	}
 	fmt.Println(STATUS.checkStatus())
-	// Output:
-	// ""
-	// true
 }
 
 // TestStatusOfSingleTargetByIDWithAdminOff
-func TestStatusOfSingleTargetByIDWithAdminOff(*testing.T) {
+func TestStatusOfSingleTargetByIDWithAdminOff(t *testing.T) {
 	STATUS = Status{
 		State: State{
 			AdministrativeState: "",
@@ -183,7 +191,11 @@ func TestStatusOfSingleTargetByIDWithAdminOff(*testing.T) {
 		},
 	}
 	STATUS.toggleAdminStateOff()
+	if STATUS.State.AdministrativeState != "AdminOff" {
+		t.Errorf("State.AdministrativeState should return \"AdminOff\", but returned " + STATUS.State.AdministrativeState)
+	}
+	if STATUS.checkStatusByID(0) != false {
+		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
+	}
 	fmt.Println(STATUS.checkStatusByID(0))
-	// Output:
-	// false
 }
