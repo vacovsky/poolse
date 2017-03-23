@@ -68,7 +68,9 @@ func (t *Target) Monitor() {
 
 		// if unable to connect, mark failed and move on
 		if err != nil {
-			r.Body.Close()
+			if r.Body != nil {
+				r.Body.Close()
+			}
 			thisIterState = false
 		} else {
 			if r.StatusCode == t.ExpectedStatusCode {
@@ -82,8 +84,9 @@ func (t *Target) Monitor() {
 				thisIterState = false
 			}
 		}
-		r.Body.Close()
-
+		if r.Body != nil {
+			r.Body.Close()
+		}
 		if thisIterState {
 			t.DownCount = 0
 			t.UpCount++
