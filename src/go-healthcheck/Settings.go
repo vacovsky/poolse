@@ -71,6 +71,12 @@ func (s *Settings) populateTargets() {
 	STATUS.Version = VERSION
 	for i := range s.Targets {
 		s.Targets[i].ID = i
+		if s.Targets[i].DownCountThreshold <= 0 {
+			s.Targets[i].DownCountThreshold = 1
+		}
+		if s.Targets[i].UpCountThreshold <= 0 {
+			s.Targets[i].UpCountThreshold = 1
+		}
 		fmt.Println("Initializing:", s.Targets[i].ID, s.Targets[i].PollingInterval, s.Targets[i].Name, s.Targets[i].Endpoint)
 		STATUS.Targets = append(STATUS.Targets, s.Targets[i])
 	}
