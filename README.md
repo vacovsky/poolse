@@ -1,6 +1,6 @@
 # Go-Healthcheck
 
-- Provides a monitorable application healthcheck & status endpoint, as well as a "toggle switch" for soft upping and downing of monitored applications.
+- Provides a monitorable application healthcheck & status endpoint, as well as a "toggle switch" for soft upping and downing of upstream web applications.
 
 - Enables automation and operations personnel to easily enable and disable an upstream node/application with simple http control endpoints.
 
