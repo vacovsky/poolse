@@ -1,4 +1,4 @@
-# Go-Healthcheck
+# Go-Healthchecker
 
 - Provides a monitorable application healthcheck & status endpoint, as well as a "toggle switch" for soft upping and downing of upstream web applications.
 
