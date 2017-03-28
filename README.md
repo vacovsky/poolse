@@ -1,10 +1,14 @@
 # Go-Healthchecker
 
-- Provides a monitorable application healthcheck & status endpoint, as well as a "toggle switch" for soft upping and downing of upstream web applications.
+## Features
 
-- Enables automation and operations personnel to easily enable and disable an upstream node/application with simple http control endpoints.
+- Exposes a simple interface to "up" and "down" upstream nodes.
 
-- JSON formatted status results allow for easy status monitoring of target applications from external monitoring tools.  Can be on a different system than the monitored application.
+- Monitoring of targets can be as simple or complex as needed.  HTTP Status code checking, reponse strings parsing, and fail/success thresholds are supported for determining health of upstream nodes.
+
+- Multiple status formats are provided, including: 503, no repsonse, as well as partial and full JSON blobs describing the state and parameters per target.
+
+- Reconfigure/reload of settings on the fly, without "downing" the node (this is handy when using automation platforms like Chef).
 
 - Provides a common format/interface for managing applications which are behind some form of reverse proxy or load balancer that checks at interval for server health status.
 
@@ -22,7 +26,7 @@ go build
 - To start with a specific configuration file, just execute like this
 
 ``` bash
-./go-healthcheck /path/to/config.json
+./go-healthchecker /path/to/config.json
 ```
 
 ``` javascript
