@@ -12,5 +12,22 @@ func TestValidateResultBodyMultipleExpectedResult(t *testing.T) {
 		OK:      true,
 	}
 
-	target.shouldReload()
+	target.ExpectedResponseStrings = []string{"we should", "icanteventell"}
+
+	fakeBody := `
+		thisisagiant
+		wallofnonsense
+		maybe we should look
+		for this string
+		but who can besure
+		icanteventell
+		something
+		`
+	target.validateResultBody(fakeBody)
+
+	if target.OK != true {
+		t.Errorf("Target.OK should be true, but returned false.")
+	}
+
+	//target.shouldReload()
 }
