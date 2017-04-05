@@ -84,7 +84,6 @@ func TestValidateResultBodyMultipleUnexpectedResultOneFound(t *testing.T) {
 		UpCount: 1,
 		OK:      true,
 	}
-
 	target.UnexpectedResponseStrings = []string{"we fburigbdiugbudiblu", "write more unit tests"}
 
 	fakeBody := `
@@ -122,5 +121,59 @@ func TestStatusCodeComparisonFails(t *testing.T) {
 
 	if target.validateResponseStatusCode(h) {
 		t.Errorf("Should return false - status code does not match expected.")
+	}
+}
+
+func TestValidateUpDownThresholdWithUnmetUpLimit(t *testing.T) {
+	target := Target{
+		UpCountThreshold: 3,
+		UpCount:          0,
+	}
+	target.validateUpDownThresholds(true)
+	if target.OK {
+		t.Errorf("Should return false because Up threshold was not met")
+	}
+}
+
+func TestValidateUpDownThresholdWithMetUpLimit(t *testing.T) {
+	target := Target{
+		UpCountThreshold: 3,
+		UpCount:          3,
+	}
+	target.validateUpDownThresholds(true)
+	if target.OK {
+		t.Errorf("Should return true because Up threshold was met")
+	}
+}
+
+func TestValidateUpDownThresholdWithUnmetDownLimit(t *testing.T) {
+	target := Target{
+		UpCountThreshold:   3,
+		UpCount:            5,
+		DownCount:          0,
+		DownCountThreshold: 3,
+	}
+	o := target.validateUpDownThresholds(false)
+	if !o {
+		t.Errorf("Should return true because Down threshold was not met")
+	}
+	if target.UpCount > 0 || target.DownCount != 1 {
+		t.Errorf("UpCount should be reset to 0 upon first detected down; DownCount should be incremented by one.")
+	}
+}
+
+func TestValidateUpDownThresholdWithMetDownLimit(t *testing.T) {
+	target := Target{
+		UpCountThreshold:   3,
+		UpCount:            0,
+		DownCount:          3,
+		DownCountThreshold: 3,
+	}
+	o := target.validateUpDownThresholds(false)
+	if o {
+		t.Errorf("Should return false because Down threshold was met")
+	}
+	if target.UpCount != 0 || target.DownCount != 4 {
+		t.Errorf("UpCount should remain at 0 and Downcount should be incremented by 1.")
 	}
 }

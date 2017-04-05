@@ -32,7 +32,6 @@ func (t *Target) shouldReload() bool {
 		if t.ID == RTARGETS[i] && !ok {
 			ok = true
 			// remove this index from the reload targets list
-			// RTARGETS = RTARGETS[:i+copy(RTARGETS[i:], RTARGETS[i+1:])]
 			RTARGETS[i] = -1
 			RTNULLIFY++
 		}
@@ -81,7 +80,7 @@ func (t *Target) checkHealth() bool {
 		}
 		return false
 	}
-	req.Header.Set("User-Agent", "Go-Healthcheck/"+VERSION)
+	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
 
 	r, err := client.Do(req)
 	if err != nil {
@@ -111,23 +110,21 @@ func (t *Target) checkHealth() bool {
 }
 
 func (t *Target) validateUpDownThresholds(curState bool) bool {
+	newState := true
 	if curState {
 		t.DownCount = 0
 		t.UpCount++
-		if t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0 {
-			thisIterState = true
-		} else {
-			thisIterState = false
+		if !(t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0) {
+			newState = false
 		}
 	} else {
 		t.UpCount = 0
 		t.DownCount++
 		if t.DownCount >= t.DownCountThreshold && t.DownCountThreshold > 0 {
-			thisIterState = false
-		} else {
-			thisIterState = true
+			newState = false
 		}
 	}
+	return newState
 }
 
 func (t *Target) validateResponseStatusCode(r *http.Response) bool {
