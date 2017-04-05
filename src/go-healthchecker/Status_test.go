@@ -55,7 +55,8 @@ func TestToggleAdminOff(t *testing.T) {
 	}
 	STATUS.toggleAdminStateOff()
 	if STATUS.State.AdministrativeState != "AdminOff" {
-		t.Errorf("State.AdministrativeState should return \"AdminOff\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"AdminOff\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatus() != false {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
@@ -77,7 +78,8 @@ func TestToggleAdminOn(t *testing.T) {
 	}
 	STATUS.toggleAdminStateOn()
 	if STATUS.State.AdministrativeState != "AdminOn" {
-		t.Errorf("State.AdministrativeState should return \"AdminOn\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"AdminOn\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatus() != true {
 		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
@@ -99,7 +101,8 @@ func TestToggleAdminResetWithOK(t *testing.T) {
 	}
 	STATUS.toggleResetAdminState()
 	if STATUS.State.AdministrativeState != "" {
-		t.Errorf("State.AdministrativeState should return \"\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatus() != true {
 		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
@@ -121,7 +124,8 @@ func TestToggleAdminResetWithoutOK(t *testing.T) {
 	}
 	STATUS.toggleResetAdminState()
 	if STATUS.State.AdministrativeState != "" {
-		t.Errorf("State.AdministrativeState should return \"\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatus() != false {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
@@ -143,7 +147,8 @@ func TestStatusOfSingleTargetByIDWithAdminReset(t *testing.T) {
 	}
 	STATUS.toggleResetAdminState()
 	if STATUS.State.AdministrativeState != "" {
-		t.Errorf("State.AdministrativeState should return \"\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatusByID(0) != false {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
@@ -165,7 +170,8 @@ func TestStatusOfSingleTargetByIDWithAdminOn(t *testing.T) {
 	}
 	STATUS.toggleAdminStateOn()
 	if STATUS.State.AdministrativeState != "AdminOn" {
-		t.Errorf("State.AdministrativeState should return \"AdminOn\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"AdminOn\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatusByID(0) != true {
 		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
@@ -187,7 +193,8 @@ func TestStatusOfSingleTargetByIDWithAdminOff(t *testing.T) {
 	}
 	STATUS.toggleAdminStateOff()
 	if STATUS.State.AdministrativeState != "AdminOff" {
-		t.Errorf("State.AdministrativeState should return \"AdminOff\", but returned " + STATUS.State.AdministrativeState)
+		t.Errorf("State.AdministrativeState should return \"AdminOff\", but returned " +
+			STATUS.State.AdministrativeState)
 	}
 	if STATUS.checkStatusByID(0) != false {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")

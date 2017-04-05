@@ -5,7 +5,8 @@ import (
 	"testing"
 )
 
-// TestValidateResultBodyExpectedResult returns false because the multiple expected strings are not found.
+// TestValidateResultBodyExpectedResult returns false because the multiple
+// expected strings are not found.
 func TestValidateResultBodyMultipleExpectedResult(t *testing.T) {
 	target := Target{
 		ID:      0,
@@ -29,7 +30,8 @@ func TestValidateResultBodyMultipleExpectedResult(t *testing.T) {
 	}
 }
 
-// TestValidateResultBodyExpectedResultOneNotFound returns false because the multiple expected strings are not found.
+// TestValidateResultBodyExpectedResultOneNotFound returns false because the
+// multiple expected strings are not found.
 func TestValidateResultBodyMultipleExpectedResultOneNotFound(t *testing.T) {
 	target := Target{
 		ID:      0,
@@ -53,7 +55,8 @@ func TestValidateResultBodyMultipleExpectedResultOneNotFound(t *testing.T) {
 	}
 }
 
-// TestValidateResultBodyUnexpectedResult returns false because not all expected strings are not found.
+// TestValidateResultBodyUnexpectedResult returns false because not
+// all expected strings are not found.
 func TestValidateResultBodyMultipleUnexpectedResult(t *testing.T) {
 	target := Target{
 		ID:      0,
@@ -77,7 +80,8 @@ func TestValidateResultBodyMultipleUnexpectedResult(t *testing.T) {
 	}
 }
 
-// TestValidateResultBodyUnexpectedResultOneFound returns true because at least one of multiple unexpected string are found.
+// TestValidateResultBodyUnexpectedResultOneFound returns true because at
+// least one of multiple unexpected string are found.
 func TestValidateResultBodyMultipleUnexpectedResultOneFound(t *testing.T) {
 	target := Target{
 		ID:      0,
@@ -100,7 +104,8 @@ func TestValidateResultBodyMultipleUnexpectedResultOneFound(t *testing.T) {
 	}
 }
 
-// TestStatusCodeComparison* tests that comparing status code returns the correct boolean value
+// TestStatusCodeComparison* tests that comparing status code returns the
+// correct boolean value
 func TestStatusCodeComparisonSuccess(t *testing.T) {
 	target := Target{
 		ExpectedStatusCode: 200,
@@ -125,7 +130,8 @@ func TestStatusCodeComparisonFails(t *testing.T) {
 	}
 }
 
-// TestValidateUpDownThreshold* tests that incrementing success and failures are correctly calculated
+// TestValidateUpDownThreshold* tests that incrementing success and failures
+// are correctly calculated
 func TestValidateUpDownThresholdWithUnmetUpLimit(t *testing.T) {
 	target := Target{
 		UpCountThreshold:   3,
