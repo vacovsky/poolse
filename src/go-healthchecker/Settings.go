@@ -16,9 +16,10 @@ type Settings struct {
 	Targets    []Target `json:"targets"`
 	LastReload time.Time
 	Service    struct {
-		HTTPPort    string `json:"http_port"` // port to listen on for web interface (5704)
-		Debug       bool   `json:"debug"`
-		ShowHTTPLog bool   `json:"show_http_log"`
+		StateFileName string `json:"state_file_name"`
+		HTTPPort      string `json:"http_port"` // port to listen on for web interface (5704)
+		Debug         bool   `json:"debug"`
+		ShowHTTPLog   bool   `json:"show_http_log"`
 	} `json:"service"`
 }
 
@@ -44,13 +45,17 @@ func (s *Settings) parseSettingsFile() {
 		fmt.Println("Could not load config file. Check JSON formatting.")
 	}
 
-	// if specified in the config file (), load the state from state.dat and set it to s.State.AdministrativeState
+	// if specified in the config file (), load the state from state.dat and
+	// set it to s.State.AdministrativeState
+	if s.Service.StateFileName == "" {
+		s.Service.StateFileName = "state.dat"
+	}
 	if s.State.PersistState {
-		s.State.loadState()
+		s.State.loadState(s.Service.StateFileName)
 	}
 
 	// apply the settings state to the STATUS state
-	STATUS.State = SETTINGS.State
+	STATUS.State = s.State
 
 	if s.State.StartupState {
 		if STATUS.isOk() {
@@ -61,10 +66,9 @@ func (s *Settings) parseSettingsFile() {
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
 
-	if SETTINGS.Service.Debug {
-		spew.Dump(SETTINGS)
+	if s.Service.Debug {
+		spew.Dump(s)
 	}
-
 }
 
 func (s *Settings) populateTargets() {

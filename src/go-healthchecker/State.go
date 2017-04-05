@@ -14,9 +14,9 @@ type State struct {
 	AdministrativeState string `json:"administrative_state"` // something
 }
 
-func (s *State) saveState() {
+func (s *State) saveState(stateFile string) {
 	// load administrative_state from file, and impart value to the SETTINGS.State.AdministrativeState field
-	f, err := os.Create("state.dat")
+	f, err := os.Create(stateFile)
 	defer f.Close()
 	if err != nil {
 		fmt.Println(err)
@@ -29,9 +29,9 @@ func (s *State) saveState() {
 	f.Sync()
 }
 
-func (s *State) loadState() {
+func (s *State) loadState(stateFile string) {
 	// save STATUS.State.AdministrativeState to file
-	v, err := ioutil.ReadFile("state.dat")
+	v, err := ioutil.ReadFile(stateFile)
 	if err != nil {
 		fmt.Println(err)
 	}
