@@ -6,7 +6,7 @@ import (
 )
 
 func showVersion() {
-	name := "LB-Toggle " + VERSION
+	name := "Go-Healthchecker " + VERSION
 	fmt.Println(name)
 }
 
@@ -26,6 +26,5 @@ func main() {
 			STATUS.State.OK = true
 		}
 	}
-
 	WG.Wait()
 }

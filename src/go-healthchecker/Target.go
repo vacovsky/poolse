@@ -140,9 +140,7 @@ func (t *Target) validateResultBody(body string) bool {
 			if SETTINGS.Service.Debug {
 				fmt.Println(body, t.ExpectedResponseStrings[s])
 			}
-			if strings.Contains(body, t.ExpectedResponseStrings[s]) {
-				r = true
-			} else {
+			if !strings.Contains(body, t.ExpectedResponseStrings[s]) {
 				r = false
 			}
 		}
@@ -154,10 +152,9 @@ func (t *Target) validateResultBody(body string) bool {
 			}
 			if strings.Contains(body, t.UnexpectedResponseStrings[s]) {
 				r = false
-			} else {
-				r = true
 			}
 		}
 	}
 	return r
+
 }
