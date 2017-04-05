@@ -53,7 +53,7 @@ func TestValidateResultBodyMultipleExpectedResultOneNotFound(t *testing.T) {
 	}
 }
 
-// TestValidateResultBodyUnexpectedResult returns false because the multiple expected strings are not found.
+// TestValidateResultBodyUnexpectedResult returns false because not all expected strings are not found.
 func TestValidateResultBodyMultipleUnexpectedResult(t *testing.T) {
 	target := Target{
 		ID:      0,
@@ -77,7 +77,7 @@ func TestValidateResultBodyMultipleUnexpectedResult(t *testing.T) {
 	}
 }
 
-// TestValidateResultBodyUnexpectedResultOneFound returns false because the multiple expected strings are not found.
+// TestValidateResultBodyUnexpectedResultOneFound returns true because at least one of multiple unexpected string are found.
 func TestValidateResultBodyMultipleUnexpectedResultOneFound(t *testing.T) {
 	target := Target{
 		ID:      0,
