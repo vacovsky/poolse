@@ -45,7 +45,7 @@ func (t *Target) Monitor() {
 	for !t.shouldReload() {
 		// this is the call to proceedurally perform all checks
 		thisIterState := t.checkHealth()
-		t.validateUpDownThresholds(thisIterState)
+		thisIterState = t.validateUpDownThresholds(thisIterState)
 
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
