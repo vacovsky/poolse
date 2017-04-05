@@ -44,34 +44,14 @@ func (t *Target) shouldReload() bool {
 func (t *Target) Monitor() {
 	defer WG.Done()
 	for !t.shouldReload() {
+		// this is the call to proceedurally perform all checks
 		thisIterState := t.checkHealth()
-
-		if thisIterState {
-			t.DownCount = 0
-			t.UpCount++
-			if t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0 {
-				thisIterState = true
-			} else {
-				thisIterState = false
-			}
-		} else {
-			t.UpCount = 0
-			t.DownCount++
-			if t.DownCount >= t.DownCountThreshold && t.DownCountThreshold > 0 {
-				thisIterState = false
-			} else {
-				thisIterState = true
-			}
-		}
+		t.validateUpDownThresholds(thisIterState)
 
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
 		if t.OK {
 			t.LastOK = t.LastChecked
-		}
-
-		if SETTINGS.Service.Debug {
-			fmt.Println(t.ID, ":::", "Last Checked:", t.LastChecked, t.Name, ":::", "OK:", t.OK)
 		}
 		// take a snooze
 		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
@@ -130,6 +110,26 @@ func (t *Target) checkHealth() bool {
 	return true
 }
 
+func (t *Target) validateUpDownThresholds() bool {
+	if thisIterState {
+		t.DownCount = 0
+		t.UpCount++
+		if t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0 {
+			thisIterState = true
+		} else {
+			thisIterState = false
+		}
+	} else {
+		t.UpCount = 0
+		t.DownCount++
+		if t.DownCount >= t.DownCountThreshold && t.DownCountThreshold > 0 {
+			thisIterState = false
+		} else {
+			thisIterState = true
+		}
+	}
+}
+
 func (t *Target) validateResponseStatusCode(r *http.Response) bool {
 	if t.ExpectedStatusCode == r.StatusCode {
 		return true
@@ -142,9 +142,6 @@ func (t *Target) validateResultBody(body string) bool {
 
 	if len(t.ExpectedResponseStrings) > 0 {
 		for s := range t.ExpectedResponseStrings {
-			if SETTINGS.Service.Debug {
-				fmt.Println(body, t.ExpectedResponseStrings[s])
-			}
 			if !strings.Contains(body, t.ExpectedResponseStrings[s]) {
 				r = false
 			}
@@ -152,9 +149,6 @@ func (t *Target) validateResultBody(body string) bool {
 	}
 	if len(t.UnexpectedResponseStrings) > 0 {
 		for s := range t.UnexpectedResponseStrings {
-			if SETTINGS.Service.Debug {
-				fmt.Println(body, t.UnexpectedResponseStrings[s])
-			}
 			if strings.Contains(body, t.UnexpectedResponseStrings[s]) {
 				r = false
 			}
