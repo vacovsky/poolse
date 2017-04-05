@@ -110,8 +110,8 @@ func (t *Target) checkHealth() bool {
 	return true
 }
 
-func (t *Target) validateUpDownThresholds() bool {
-	if thisIterState {
+func (t *Target) validateUpDownThresholds(curState bool) bool {
+	if curState {
 		t.DownCount = 0
 		t.UpCount++
 		if t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0 {
@@ -155,5 +155,4 @@ func (t *Target) validateResultBody(body string) bool {
 		}
 	}
 	return r
-
 }
