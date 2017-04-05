@@ -1,48 +1,50 @@
 {
-    "state": {
-        "startup_state": true,
-        "persist_state": true
-    },
-    "targets": [
-        {
-            "endpoint": "http://localhost:5704/fakehealth",
-            "polling_interval": 5,
-            "expected_status_code": 200,
-            "down_count_threshold": 3,
-            "up_count_threshold": 3
-        },
-        {
-            "name": "FakeSmoke",
-            "endpoint": "http://localhost:5704/fakesmoke",
-            "polling_interval": 5,
-            "expected_status_code": 200
-        },
-        {
-            "name": "Expected Example",
-            "endpoint": "http://localhost:5704/fakeexpected",
-            "polling_interval": 5,
-            "expected_status_code": 200,
-            "down_count_threshold": 3,
-            "up_count_threshold": 3,
-            "expected_response_strings": [
-                "\"is_working\": true"
-            ]
-        },
-        {
-            "name": "Unexpected Example",
-            "endpoint": "http://localhost:5704/fakeexpected",
-            "polling_interval": 5,
-            "expected_status_code": 200,
-            "down_count_threshold": 3,
-            "up_count_threshold": 3,
-            "unexpected_response_strings": [
-                "\"is_working\": false"
-            ]
-        }
-    ],
-    "service": {
-        "http_port": "5704",
-        "debug": false,
-        "show_http_log": true
-    }
+		"state": {
+				"startup_state": true,
+				"persist_state": true
+		},
+		"targets": [
+				{
+						"endpoint": "http://localhost:5704/fakehealth",
+						"polling_interval": 5,
+						"expected_status_code": 200,
+						"down_count_threshold": 3,
+						"up_count_threshold": 3
+				},
+				{
+						"name": "FakeSmoke",
+						"endpoint": "http://localhost:5704/fakesmoke",
+						"polling_interval": 5,
+						"expected_status_code": 200
+				},
+				{
+						"name": "Expected Example",
+						"endpoint": "http://localhost:5704/fakeexpected",
+						"polling_interval": 5,
+						"expected_status_code": 200,
+						"down_count_threshold": 3,
+						"up_count_threshold": 3,
+						"expected_response_strings": [
+								"\"is_working\": true"
+						]
+				},
+				{
+						"name": "Unexpected Example",
+						"endpoint": "http://localhost:5704/fakeexpected",
+						"polling_interval": 5,
+						"expected_status_code": 200,
+						"down_count_threshold": 3,
+						"up_count_threshold": 3,
+						"unexpected_response_strings": [
+								"\"is_working\": false"
+						]
+				}
+		],
+		"service": {
+				"http_port": "5704",
+				"debug": false,
+				"show_http_log": true,
+				"state_file_name": "State.dat"
+
+		}
 }
