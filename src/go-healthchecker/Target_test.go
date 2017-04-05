@@ -100,6 +100,7 @@ func TestValidateResultBodyMultipleUnexpectedResultOneFound(t *testing.T) {
 	}
 }
 
+// TestStatusCodeComparison* tests that comparing status code returns the correct boolean value
 func TestStatusCodeComparisonSuccess(t *testing.T) {
 	target := Target{
 		ExpectedStatusCode: 200,
@@ -124,25 +125,37 @@ func TestStatusCodeComparisonFails(t *testing.T) {
 	}
 }
 
+// TestValidateUpDownThreshold* tests that incrementing success and failures are correctly calculated
 func TestValidateUpDownThresholdWithUnmetUpLimit(t *testing.T) {
 	target := Target{
-		UpCountThreshold: 3,
-		UpCount:          0,
+		UpCountThreshold:   3,
+		UpCount:            0,
+		DownCount:          78,
+		DownCountThreshold: 3,
 	}
-	target.validateUpDownThresholds(true)
-	if target.OK {
+	o := target.validateUpDownThresholds(true)
+	if o {
 		t.Errorf("Should return false because Up threshold was not met")
 	}
+	if target.DownCount != 0 || target.UpCount != 1 {
+		t.Errorf("UpCount should have been incremented by 1 and DownCount should remain at 0.")
+	}
+
 }
 
 func TestValidateUpDownThresholdWithMetUpLimit(t *testing.T) {
 	target := Target{
-		UpCountThreshold: 3,
-		UpCount:          3,
+		UpCountThreshold:   3,
+		UpCount:            3,
+		DownCount:          0,
+		DownCountThreshold: 3,
 	}
-	target.validateUpDownThresholds(true)
-	if target.OK {
+	o := target.validateUpDownThresholds(true)
+	if !o {
 		t.Errorf("Should return true because Up threshold was met")
+	}
+	if target.DownCount != 0 || target.UpCount != 4 {
+		t.Errorf("UpCount should have been incremented by 1 and DownCount should remain at 0.")
 	}
 }
 
