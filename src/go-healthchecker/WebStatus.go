@@ -18,8 +18,10 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 
 	if err == nil && id >= 0 && id < len(STATUS.Targets) && len(STATUS.Targets) > 0 {
 		blob, _ = json.Marshal(&STATUS.Targets[id])
+		result = STATUS.Targets[id].OK
 	} else {
 		blob, _ = json.Marshal(&STATUS)
+		result = STATUS.isOk()
 	}
 
 	if SETTINGS.Service.ShowHTTPLog {

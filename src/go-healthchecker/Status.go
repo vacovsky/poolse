@@ -59,6 +59,9 @@ func (s Status) isOk() bool {
 			ok = false
 		}
 	}
+	if ok {
+		s.State.OK = true
+	}
 	return ok
 }
 
