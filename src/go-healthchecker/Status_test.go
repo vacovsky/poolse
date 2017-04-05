@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 // TestToggleOff ensures the Status object is off when
 // it is manually set to off through the method
@@ -37,7 +34,6 @@ func TestToggleFailsBecauseHealthStatusIsFalse(t *testing.T) {
 		},
 	}
 	STATUS.toggle()
-	fmt.Println(STATUS.State.OK)
 
 	if STATUS.checkStatus() != false {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
@@ -174,7 +170,6 @@ func TestStatusOfSingleTargetByIDWithAdminOn(t *testing.T) {
 	if STATUS.checkStatusByID(0) != true {
 		t.Errorf("STATUS.checkStatus() should return true, but returned false.")
 	}
-	fmt.Println(STATUS.checkStatus())
 }
 
 // TestStatusOfSingleTargetByIDWithAdminOff
@@ -197,5 +192,4 @@ func TestStatusOfSingleTargetByIDWithAdminOff(t *testing.T) {
 	if STATUS.checkStatusByID(0) != false {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
 	}
-	fmt.Println(STATUS.checkStatusByID(0))
 }

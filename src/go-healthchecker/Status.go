@@ -22,7 +22,7 @@ func (s *Status) startMonitor() {
 }
 
 func (s *Status) toggleOn() {
-	// TODO: check all endpoints, and if all pass the checks, set STATUS.State to true
+	// check all endpoints, and if all pass the checks, set STATUS.State to true
 	safe := true
 	for _, t := range s.Targets {
 		if !t.OK {

@@ -51,7 +51,6 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 	} else {
 		http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
 	}
-
 }
 
 func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
