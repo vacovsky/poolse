@@ -1,2 +1,3 @@
 src/go-healthcheck/go-healthcheck
 src/go-healthcheck/debug
+*.swp

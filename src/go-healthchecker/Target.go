@@ -44,49 +44,8 @@ func (t *Target) shouldReload() bool {
 func (t *Target) Monitor() {
 	defer WG.Done()
 	for !t.shouldReload() {
-		thisIterState := true
-		bodyString := ""
+		thisIterState := t.checkHealth()
 
-		// get response body
-		client := &http.Client{}
-		req, err := http.NewRequest("GET", t.Endpoint, nil)
-		if err != nil {
-			if SETTINGS.Service.Debug {
-				fmt.Println(err)
-			}
-			thisIterState = false
-		}
-		req.Header.Set("User-Agent", "Go-Healthcheck/"+VERSION)
-
-		r, err := client.Do(req)
-		if err != nil {
-			if SETTINGS.Service.Debug {
-				fmt.Println(err)
-			}
-			thisIterState = false
-		}
-
-		// if unable to connect, mark failed and move on
-		if err != nil {
-			if r != nil && r.Body != nil {
-				r.Body.Close()
-			}
-			thisIterState = false
-		} else {
-			if r.StatusCode == t.ExpectedStatusCode {
-				bodyBytes, err := ioutil.ReadAll(r.Body)
-				if err != nil {
-					fmt.Println(err)
-				}
-				bodyString = string(bodyBytes)
-				thisIterState = t.validateResultBody(bodyString)
-			} else {
-				thisIterState = false
-			}
-		}
-		if r != nil && r.Body != nil {
-			r.Body.Close()
-		}
 		if thisIterState {
 			t.DownCount = 0
 			t.UpCount++
@@ -130,6 +89,52 @@ func (t *Target) Monitor() {
 		t.UpCount = 0
 	}
 	return
+}
+
+func (t *Target) checkHealth() bool {
+	// get response body
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", t.Endpoint, nil)
+	if err != nil {
+		if SETTINGS.Service.Debug {
+			fmt.Println(err)
+		}
+		return false
+	}
+	req.Header.Set("User-Agent", "Go-Healthcheck/"+VERSION)
+
+	r, err := client.Do(req)
+	if err != nil {
+		if SETTINGS.Service.Debug {
+			fmt.Println(err)
+		}
+		return false
+	}
+
+	// if unable to connect, mark failed and move on
+	if err != nil {
+		if r != nil && r.Body != nil {
+			r.Body.Close()
+			return false
+		}
+
+		if !t.validateResponseStatusCode(r) {
+			return false
+		}
+
+		bodyBytes, _ := ioutil.ReadAll(r.Body)
+		if !t.validateResultBody(string(bodyBytes)) {
+			return false
+		}
+	}
+	return true
+}
+
+func (t *Target) validateResponseStatusCode(r *http.Response) bool {
+	if t.ExpectedStatusCode == r.StatusCode {
+		return true
+	}
+	return false
 }
 
 func (t *Target) validateResultBody(body string) bool {

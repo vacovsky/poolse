@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http/httptest"
 	"testing"
 )
 
@@ -24,7 +25,6 @@ func TestValidateResultBodyMultipleExpectedResult(t *testing.T) {
 		something
 		`
 	if !target.validateResultBody(fakeBody) {
-
 		t.Errorf("Should be true, but returned false.")
 	}
 }
@@ -98,5 +98,29 @@ func TestValidateResultBodyMultipleUnexpectedResultOneFound(t *testing.T) {
 		`
 	if !target.validateResultBody(fakeBody) {
 		t.Errorf("Target.OK should be true, but returned false.")
+	}
+}
+
+func TestStatusCodeComparisonSuccess(t *testing.T) {
+	target := Target{
+		ExpectedStatusCode: 200,
+	}
+	h := httptest.NewRecorder().Result()
+	h.StatusCode = 200
+
+	if !target.validateResponseStatusCode(h) {
+		t.Errorf("Should return true - status code and ExpectedStatusCode matches expected.")
+	}
+}
+
+func TestStatusCodeComparisonFails(t *testing.T) {
+	target := Target{
+		ExpectedStatusCode: 200,
+	}
+	h := httptest.NewRecorder().Result()
+	h.StatusCode = 500
+
+	if target.validateResponseStatusCode(h) {
+		t.Errorf("Should return false - status code does not match expected.")
 	}
 }
