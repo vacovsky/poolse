@@ -1,3 +1,5 @@
-src/go-healthcheck/go-healthcheck
+src/go-healthcheck/go-healthchecker
 src/go-healthcheck/debug
 *.swp
+tags
+*.dat

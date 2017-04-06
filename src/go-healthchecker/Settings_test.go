@@ -1,6 +1,11 @@
 package main
 
-/* TestConfigFileLoadsCorrectly
+import (
+	"os"
+	"testing"
+)
+
+// TestConfigFileLoadsCorrectly
 func TestSomeSettingsStuff(t *testing.T) {
 	os.Args = []string{
 		"testing",
@@ -34,4 +39,7 @@ func TestSomeSettingsStuff(t *testing.T) {
 	}
 
 }
-*/
+
+func TestSettingsRefresh() {
+
+}
