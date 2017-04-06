@@ -40,6 +40,6 @@ func TestSomeSettingsStuff(t *testing.T) {
 
 }
 
-func TestSettingsRefresh() {
+func TestSettingsRefresh(t *testing.T) {
 
 }
