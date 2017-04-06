@@ -23,6 +23,29 @@ type Settings struct {
 	} `json:"service"`
 }
 
+func (s *Settings) load() {
+	s.parseSettingsFile()
+
+	// Populate global STATUS with targets from config file
+	s.populateTargets()
+
+	if s.Service.Debug {
+		spew.Dump(s)
+	}
+	s.checkStartupState()
+}
+
+func (s *Settings) checkStartupState() {
+	if s.State.StartupState {
+		// give the targets a bit to catch up
+		time.Sleep(time.Duration(len(s.Targets)) * time.Second)
+		if STATUS.isOk() {
+			STATUS.State.OK = true
+		}
+	}
+
+}
+
 func (s *Settings) parseSettingsFile() {
 	confFile := "../../init/config.json"
 	if len(os.Args) > 1 {
@@ -45,8 +68,6 @@ func (s *Settings) parseSettingsFile() {
 		fmt.Println("Could not load config file. Check JSON formatting.")
 	}
 
-	// if specified in the config file (), load the state from state.dat and
-	// set it to s.State.AdministrativeState
 	if s.Service.StateFileName == "" {
 		s.Service.StateFileName = "state.dat"
 	}
@@ -57,18 +78,6 @@ func (s *Settings) parseSettingsFile() {
 	// apply the settings state to the STATUS state
 	STATUS.State = s.State
 
-	if s.State.StartupState {
-		if STATUS.isOk() {
-			STATUS.State.OK = true
-		}
-	}
-
-	// Populate global STATUS with targets from config file
-	s.populateTargets()
-
-	if s.Service.Debug {
-		spew.Dump(s)
-	}
 }
 
 func (s *Settings) populateTargets() {
@@ -93,6 +102,19 @@ func (s *Settings) populateTargets() {
 }
 
 func (s *Settings) reloadSettings() {
+	s.stopAllTargetMonitors()
+	// repopulate targets from config file, presumably updated with new stuff
+
+	SETTINGS.parseSettingsFile()
+
+	// resume motoring with new targets and settings
+	STATUS.startMonitor()
+	time.Sleep(time.Duration(1) * time.Second)
+
+	s.checkStartupState()
+}
+
+func (s *Settings) stopAllTargetMonitors() {
 	for i := range s.Targets {
 		RTARGETS = append(RTARGETS, s.Targets[i].ID)
 	}
@@ -105,26 +127,4 @@ func (s *Settings) reloadSettings() {
 	// set tagets to empty slice
 	SETTINGS = Settings{}
 	STATUS = Status{}
-	if STATUS.State.AdministrativeState == "AdminOn" {
-		STATUS.State.OK = true
-	}
-
-	// repopulate targets from config file, presumably updated with new stuff
-	// (this calls popualteTargets)
-	SETTINGS.parseSettingsFile()
-	STATUS.State = SETTINGS.State
-
-	// resume motoring with new targets and settings
-	STATUS.startMonitor()
-	time.Sleep(time.Duration(1) * time.Second)
-
-	if s.State.StartupState {
-		// give the targets a bit to catch up
-		time.Sleep(time.Duration(len(s.Targets)) * time.Second)
-		if STATUS.isOk() {
-			STATUS.State.OK = true
-		}
-	}
-
-	WG.Done()
 }

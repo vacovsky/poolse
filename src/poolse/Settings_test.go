@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-// TestConfigFileLoadsCorrectly
-func TestSomeSettingsStuff(t *testing.T) {
+// TestLoadingSettings
+func TestLoadingSettings(t *testing.T) {
 	os.Args = []string{
 		"testing",
 		"config_test.json",
@@ -37,9 +37,9 @@ func TestSomeSettingsStuff(t *testing.T) {
 	if !pass {
 		t.Errorf("SETTINGS did not match the clone - config file improperly parsed")
 	}
-
 }
 
+// TestSettingsRefresh
 func TestSettingsRefresh(t *testing.T) {
 
 }
