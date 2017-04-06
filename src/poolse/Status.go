@@ -59,9 +59,13 @@ func (s Status) isOk() bool {
 			ok = false
 		}
 	}
-	if ok {
-		s.State.OK = true
-	}
+	//if ok && s.State.StartupState {
+	//	s.State.OK = true
+	//} else if ok && !s.State.StartupState {
+	//	s.State.OK = false
+	//} else {
+	//	s.State.OK = false
+	//}
 	return ok
 }
 
