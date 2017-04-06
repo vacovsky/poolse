@@ -1,4 +1,4 @@
-# Go-Healthchecker
+# Poolse (formerly Go-Healthchecker)
 
 ## Features
 
@@ -16,8 +16,8 @@
 
 ``` bash
 go get -u github.com/davecgh/go-spew/spew
-git clone https://github.com/vacoj/go-healthcheck.git
-cd go-healthcheck/src/go-healthcheck
+git clone https://github.com/vacoj/poolse.git
+cd poolse/src/poolse
 go build
 ```
 
@@ -26,7 +26,7 @@ go build
 - To start with a specific configuration file, just execute like this
 
 ``` bash
-./go-healthchecker /path/to/config.json
+./poolse /path/to/config.json
 ```
 
 ``` javascript
