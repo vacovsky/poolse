@@ -32,7 +32,6 @@ func (t *Target) shouldReload() bool {
 		if t.ID == RTARGETS[i] && !ok {
 			ok = true
 			// remove this index from the reload targets list
-			// RTARGETS = RTARGETS[:i+copy(RTARGETS[i:], RTARGETS[i+1:])]
 			RTARGETS[i] = -1
 			RTNULLIFY++
 		}
@@ -44,75 +43,14 @@ func (t *Target) shouldReload() bool {
 func (t *Target) Monitor() {
 	defer WG.Done()
 	for !t.shouldReload() {
-		thisIterState := true
-		bodyString := ""
-
-		// get response body
-		client := &http.Client{}
-		req, err := http.NewRequest("GET", t.Endpoint, nil)
-		if err != nil {
-			if SETTINGS.Service.Debug {
-				fmt.Println(err)
-			}
-			thisIterState = false
-		}
-		req.Header.Set("User-Agent", "Go-Healthcheck/"+VERSION)
-
-		r, err := client.Do(req)
-		if err != nil {
-			if SETTINGS.Service.Debug {
-				fmt.Println(err)
-			}
-			thisIterState = false
-		}
-
-		// if unable to connect, mark failed and move on
-		if err != nil {
-			if r != nil && r.Body != nil {
-				r.Body.Close()
-			}
-			thisIterState = false
-		} else {
-			if r.StatusCode == t.ExpectedStatusCode {
-				bodyBytes, err := ioutil.ReadAll(r.Body)
-				if err != nil {
-					fmt.Println(err)
-				}
-				bodyString = string(bodyBytes)
-				thisIterState = t.validateResultBody(bodyString)
-			} else {
-				thisIterState = false
-			}
-		}
-		if r != nil && r.Body != nil {
-			r.Body.Close()
-		}
-		if thisIterState {
-			t.DownCount = 0
-			t.UpCount++
-			if t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0 {
-				thisIterState = true
-			} else {
-				thisIterState = false
-			}
-		} else {
-			t.UpCount = 0
-			t.DownCount++
-			if t.DownCount >= t.DownCountThreshold && t.DownCountThreshold > 0 {
-				thisIterState = false
-			} else {
-				thisIterState = true
-			}
-		}
+		// this is the call to proceedurally perform all checks
+		thisIterState := t.checkHealth()
+		thisIterState = t.validateUpDownThresholds(thisIterState)
 
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
 		if t.OK {
 			t.LastOK = t.LastChecked
-		}
-
-		if SETTINGS.Service.Debug {
-			fmt.Println(t.ID, ":::", "Last Checked:", t.LastChecked, t.Name, ":::", "OK:", t.OK)
 		}
 		// take a snooze
 		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
@@ -132,14 +70,75 @@ func (t *Target) Monitor() {
 	return
 }
 
+func (t *Target) checkHealth() bool {
+	// get response body
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", t.Endpoint, nil)
+	if err != nil {
+		if SETTINGS.Service.Debug {
+			fmt.Println(err)
+		}
+		return false
+	}
+	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
+
+	r, err := client.Do(req)
+	if err != nil {
+		if SETTINGS.Service.Debug {
+			fmt.Println(err)
+		}
+		return false
+	}
+
+	// if unable to connect, mark failed and move on
+	if err != nil {
+		if r != nil && r.Body != nil {
+			r.Body.Close()
+			return false
+		}
+
+		if !t.validateResponseStatusCode(r) {
+			return false
+		}
+
+		bodyBytes, _ := ioutil.ReadAll(r.Body)
+		if !t.validateResultBody(string(bodyBytes)) {
+			return false
+		}
+	}
+	return true
+}
+
+func (t *Target) validateUpDownThresholds(curState bool) bool {
+	newState := true
+	if curState {
+		t.DownCount = 0
+		t.UpCount++
+		if !(t.UpCount >= t.UpCountThreshold && t.UpCountThreshold > 0) {
+			newState = false
+		}
+	} else {
+		t.UpCount = 0
+		t.DownCount++
+		if t.DownCount >= t.DownCountThreshold && t.DownCountThreshold > 0 {
+			newState = false
+		}
+	}
+	return newState
+}
+
+func (t *Target) validateResponseStatusCode(r *http.Response) bool {
+	if t.ExpectedStatusCode == r.StatusCode {
+		return true
+	}
+	return false
+}
+
 func (t *Target) validateResultBody(body string) bool {
 	r := true
 
 	if len(t.ExpectedResponseStrings) > 0 {
 		for s := range t.ExpectedResponseStrings {
-			if SETTINGS.Service.Debug {
-				fmt.Println(body, t.ExpectedResponseStrings[s])
-			}
 			if !strings.Contains(body, t.ExpectedResponseStrings[s]) {
 				r = false
 			}
@@ -147,14 +146,10 @@ func (t *Target) validateResultBody(body string) bool {
 	}
 	if len(t.UnexpectedResponseStrings) > 0 {
 		for s := range t.UnexpectedResponseStrings {
-			if SETTINGS.Service.Debug {
-				fmt.Println(body, t.UnexpectedResponseStrings[s])
-			}
 			if strings.Contains(body, t.UnexpectedResponseStrings[s]) {
 				r = false
 			}
 		}
 	}
 	return r
-
 }

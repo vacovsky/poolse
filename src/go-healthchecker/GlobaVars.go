@@ -5,7 +5,10 @@ import (
 )
 
 // VERSION of application
-var VERSION = "0.3.13"
+const VERSION = "0.3.14"
+
+// APPNAME of application.  One place to change it everywhere else.  :shrug:
+const APPNAME = "Go-Healthchecker"
 
 // WG contains list of running goroutines
 var WG sync.WaitGroup

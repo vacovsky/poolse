@@ -1,0 +1,22 @@
+{
+		"state": {
+				"startup_state": false,
+				"persist_state": false
+		},
+		"targets": [
+				{
+						"endpoint": "beer://thisisfortestingonly.whatever",
+						"polling_interval": -1,
+						"expected_status_code": -1,
+						"down_count_threshold": -1,
+						"up_count_threshold": -1
+				}		
+		],
+		"service": {
+				"http_port": "1234567",
+				"debug": true,
+				"show_http_log": false,
+				"state_file_name": "indiapaleale.dat"
+
+		}
+}
