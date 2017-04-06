@@ -6,7 +6,7 @@ import (
 )
 
 func showVersion() {
-	name := "Go-Healthchecker " + VERSION
+	name := APPNAME + " " + VERSION
 	fmt.Println(name)
 }
 
