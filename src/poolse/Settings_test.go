@@ -41,5 +41,47 @@ func TestLoadingSettings(t *testing.T) {
 
 // TestSettingsRefresh
 func TestSettingsRefresh(t *testing.T) {
+	SETTINGS = Settings{
+		Targets: []Target{
+			Target{
+				Endpoint:           "beer://thisisfortestingonly.whatever",
+				PollingInterval:    -1,
+				ExpectedStatusCode: -1,
+				DownCountThreshold: -1,
+				UpCountThreshold:   -1,
+			},
+		},
+	}
+	SETTINGS.populateTargets()
+	if STATUS.Targets[0].DownCountThreshold != 1 ||
+		STATUS.Targets[0].UpCountThreshold != 1 {
+		t.Errorf("Up/Down count threstholds should be set 1 if configured to be less than 1.")
+	}
+}
 
+func TestStoppingMonitorProcesses(t *testing.T) {
+
+}
+
+func TestCheckingStartupState(t *testing.T) {
+	s := Settings{
+		State: State{
+			StartupState: true,
+		},
+		Targets: []Target{
+			Target{
+				OK: true,
+			},
+		},
+	}
+	STATUS.Targets = []Target{
+		Target{
+			OK: true,
+		},
+	}
+	s.checkStartupState()
+
+	if !STATUS.State.OK {
+		t.Errorf("Top level state should be OK (true)")
+	}
 }

@@ -43,7 +43,6 @@ func (s *Settings) checkStartupState() {
 			STATUS.State.OK = true
 		}
 	}
-
 }
 
 func (s *Settings) parseSettingsFile() {
