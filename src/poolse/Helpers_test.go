@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func TestFindLongestRefresh(t *testing.T) {
 	ts := []Target{
@@ -17,7 +14,6 @@ func TestFindLongestRefresh(t *testing.T) {
 			PollingInterval: 9,
 		},
 	}
-	fmt.Println(findLongestPollingInterval(ts))
 	if findLongestPollingInterval(ts) != 15 {
 		t.Errorf("longest polling interval should be 15")
 	}

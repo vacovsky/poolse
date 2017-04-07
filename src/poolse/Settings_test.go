@@ -57,6 +57,9 @@ func TestSettingsRefresh(t *testing.T) {
 		STATUS.Targets[0].UpCountThreshold != 1 {
 		t.Errorf("--- Up/Down count threstholds should be set 1 if configured to be less than 1.")
 	}
+	if STATUS.Targets[0].Endpoint != SETTINGS.Targets[0].Endpoint {
+		t.Errorf("SETTINGS and STATUS first target endpoint do not match.")
+	}
 }
 
 func TestStoppingMonitorProcesses(t *testing.T) {
