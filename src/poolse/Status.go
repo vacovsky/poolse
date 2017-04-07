@@ -15,11 +15,11 @@ func (s *Status) startMonitor() {
 	for i := range STATUS.Targets {
 		if SETTINGS.Service.Debug {
 			fmt.Println("Starting ",
-				STATUS.Targets[i].Name,
-				STATUS.Targets[i].Endpoint)
+				s.Targets[i].Name,
+				s.Targets[i].Endpoint)
 		}
 		WG.Add(1)
-		go STATUS.Targets[i].Monitor()
+		go s.Targets[i].Monitor()
 	}
 }
 
@@ -41,7 +41,7 @@ func (s *Status) toggleOff() {
 func (s *Status) toggle() {
 	if !s.State.OK {
 		safe := true
-		for _, t := range STATUS.Targets {
+		for _, t := range s.Targets {
 			if !t.OK {
 				safe = false
 			}
@@ -58,9 +58,6 @@ func (s Status) isOk() bool {
 		if !t.OK {
 			ok = false
 		}
-	}
-	if ok {
-		s.State.OK = true
 	}
 	return ok
 }
@@ -87,18 +84,18 @@ func (s *Status) toggleResetAdminState() {
 }
 
 func (s *Status) checkStatusByID(id int) bool {
-	if (STATUS.Targets[id].OK &&
-		!(STATUS.State.AdministrativeState == "AdminOff")) ||
-		STATUS.State.AdministrativeState == "AdminOn" {
+	if (s.Targets[id].OK &&
+		!(s.State.AdministrativeState == "AdminOff")) ||
+		s.State.AdministrativeState == "AdminOn" {
 		return true
 	}
 	return false
 }
 
 func (s *Status) checkStatus() bool {
-	if (STATUS.isOk() && STATUS.State.OK &&
-		!(STATUS.State.AdministrativeState == "AdminOff")) ||
-		STATUS.State.AdministrativeState == "AdminOn" {
+	if (s.isOk() && s.State.OK &&
+		!(s.State.AdministrativeState == "AdminOff")) ||
+		s.State.AdministrativeState == "AdminOn" {
 		return true
 	}
 	return false

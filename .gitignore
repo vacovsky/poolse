@@ -1,5 +1,6 @@
-src/go-healthcheck/go-healthchecker
-src/go-healthcheck/debug
+src/poolse/poolse
+src/poolse/debug
 *.swp
+*.swo
 tags
 *.dat

@@ -44,7 +44,7 @@
 				"http_port": "5704",
 				"debug": false,
 				"show_http_log": true,
-				"state_file_name": "State.dat"
+				"state_file_name": "state.dat"
 
 		}
 }

@@ -11,7 +11,7 @@ func showVersion() {
 }
 
 func main() {
-	SETTINGS.parseSettingsFile()
+	SETTINGS.load()
 
 	// Monitor application for health status
 	STATUS.startMonitor()
