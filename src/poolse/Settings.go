@@ -32,17 +32,20 @@ func (s *Settings) load() {
 	if s.Service.Debug {
 		spew.Dump(s)
 	}
-	s.checkStartupState()
 }
 
 func (s *Settings) checkStartupState() {
-	if s.State.StartupState {
-		// give the targets a bit to catch up
-		time.Sleep(time.Duration(len(s.Targets)) * time.Second)
-		if STATUS.isOk() {
-			STATUS.State.OK = true
+	WG.Add(1)
+	go func() {
+		if s.State.StartupState {
+			// give the targets a bit to catch up
+			time.Sleep(time.Duration(findLongestPollingInterval(s.Targets)+3) * time.Second)
+			if STATUS.isOk() {
+				STATUS.State.OK = true
+			}
 		}
-	}
+		WG.Done()
+	}()
 }
 
 func (s *Settings) parseSettingsFile() {
@@ -104,12 +107,11 @@ func (s *Settings) reloadSettings() {
 	s.stopAllTargetMonitors()
 	// repopulate targets from config file, presumably updated with new stuff
 
-	SETTINGS.parseSettingsFile()
+	s.parseSettingsFile()
+	s.populateTargets()
 
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()
-	time.Sleep(time.Duration(1) * time.Second)
-
 	s.checkStartupState()
 }
 

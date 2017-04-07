@@ -35,7 +35,7 @@ func TestLoadingSettings(t *testing.T) {
 		settingsShouldBeThis.Targets[0].UpCountThreshold == SETTINGS.Targets[0].UpCountThreshold)
 
 	if !pass {
-		t.Errorf("SETTINGS did not match the clone - config file improperly parsed")
+		t.Errorf("--- SETTINGS did not match the clone - config file improperly parsed")
 	}
 }
 
@@ -55,7 +55,7 @@ func TestSettingsRefresh(t *testing.T) {
 	SETTINGS.populateTargets()
 	if STATUS.Targets[0].DownCountThreshold != 1 ||
 		STATUS.Targets[0].UpCountThreshold != 1 {
-		t.Errorf("Up/Down count threstholds should be set 1 if configured to be less than 1.")
+		t.Errorf("--- Up/Down count threstholds should be set 1 if configured to be less than 1.")
 	}
 }
 
@@ -70,7 +70,8 @@ func TestCheckingStartupState(t *testing.T) {
 		},
 		Targets: []Target{
 			Target{
-				OK: true,
+				PollingInterval: 1,
+				OK:              true,
 			},
 		},
 	}
@@ -79,9 +80,11 @@ func TestCheckingStartupState(t *testing.T) {
 			OK: true,
 		},
 	}
+
 	s.checkStartupState()
+	WG.Wait()
 
 	if !STATUS.State.OK {
-		t.Errorf("Top level state should be OK (true)")
+		t.Errorf("--- Top level state should be OK (true)")
 	}
 }
