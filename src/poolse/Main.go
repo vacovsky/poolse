@@ -11,6 +11,7 @@ func showVersion() {
 }
 
 func main() {
+	showVersion()
 	SETTINGS.load()
 
 	// Monitor application for health status
