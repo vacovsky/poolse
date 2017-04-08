@@ -2,7 +2,7 @@ src/poolse/poolse
 src/poolse/debug
 *.swp
 *.swo
-*/tags
+tags
 *.dat
 src/poolse/report
 .DS_Store

@@ -26,7 +26,6 @@ func (s *Settings) load() {
 
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
-
 }
 
 func (s *Settings) checkStartupState() {

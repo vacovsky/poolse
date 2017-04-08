@@ -4,6 +4,7 @@ import "time"
 
 func main() {
 	showVersion()
+
 	SETTINGS.load()
 
 	// Monitor application for health status

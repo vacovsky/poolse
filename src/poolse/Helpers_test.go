@@ -24,3 +24,4 @@ func TestShowVersion(t *testing.T) {
 		t.Errorf("showVersion should return Foo Bar")
 	}
 }
+
