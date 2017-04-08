@@ -128,10 +128,11 @@ func (t *Target) validateUpDownThresholds(curState bool) bool {
 }
 
 func (t *Target) validateResponseStatusCode(r *http.Response) bool {
-	if t.ExpectedStatusCode == r.StatusCode {
-		return true
+	match := true
+	if t.ExpectedStatusCode != r.StatusCode {
+		match = false
 	}
-	return false
+	return match
 }
 
 func (t *Target) validateResultBody(body string) bool {

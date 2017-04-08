@@ -4,3 +4,5 @@ src/poolse/debug
 *.swo
 tags
 *.dat
+src/poolse/report
+.DS_Store

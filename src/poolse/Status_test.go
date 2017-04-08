@@ -200,3 +200,39 @@ func TestStatusOfSingleTargetByIDWithAdminOff(t *testing.T) {
 		t.Errorf("STATUS.checkStatus() should return false, but returned true.")
 	}
 }
+
+func TestStatusIsOk(t *testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: true,
+			},
+		},
+	}
+
+	if !STATUS.isOk() {
+		t.Errorf("isOk should be true, but returned false.")
+	}
+}
+
+func TestStatusIsOkButReallyIsnt(t *testing.T) {
+	STATUS = Status{
+		State: State{
+			AdministrativeState: "",
+			OK:                  false,
+		},
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
+		},
+	}
+
+	if STATUS.isOk() {
+		t.Errorf("isOk should be false, but returned true.")
+	}
+}

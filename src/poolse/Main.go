@@ -1,16 +1,10 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
-
-func showVersion() {
-	name := APPNAME + " " + VERSION
-	fmt.Println(name)
-}
+import "time"
 
 func main() {
+	showVersion()
+
 	SETTINGS.load()
 
 	// Monitor application for health status

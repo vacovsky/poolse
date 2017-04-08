@@ -39,17 +39,7 @@ func (s *Status) toggleOff() {
 }
 
 func (s *Status) toggle() {
-	if !s.State.OK {
-		safe := true
-		for _, t := range s.Targets {
-			if !t.OK {
-				safe = false
-			}
-		}
-		s.State.OK = safe
-	} else {
-		s.State.OK = false
-	}
+	s.State.OK = s.isOk()
 }
 
 func (s Status) isOk() bool {
@@ -57,6 +47,7 @@ func (s Status) isOk() bool {
 	for _, t := range s.Targets {
 		if !t.OK {
 			ok = false
+			break
 		}
 	}
 	return ok
