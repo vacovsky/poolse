@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 	"time"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 //Settings contains the config.json information for configuring the listening port, monitored application details, etc
@@ -29,9 +27,6 @@ func (s *Settings) load() {
 	// Populate global STATUS with targets from config file
 	s.populateTargets()
 
-	if s.Service.Debug {
-		spew.Dump(s)
-	}
 }
 
 func (s *Settings) checkStartupState() {

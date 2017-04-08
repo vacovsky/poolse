@@ -7,12 +7,15 @@ import (
 )
 
 func Test_StatusSimpleWeb_200(t *testing.T) {
-	STATUS := Status{}
-	STATUS.Targets = []Target{
-		Target{
-			OK: true,
+	STATUS := Status{
+		Targets: []Target{
+			Target{
+				OK: true,
+			},
 		},
 	}
+	STATUS.State.OK = true
+
 	STATUS.State.OK = true
 	STATUS.State.AdministrativeState = "AdminOn"
 	req, err := http.NewRequest("GET", "/status/simple", nil)
@@ -39,10 +42,11 @@ func Test_StatusSimpleWeb_200(t *testing.T) {
 }
 
 func Test_StatusSimpleWeb_503(t *testing.T) {
-	STATUS := Status{}
-	STATUS.Targets = []Target{
-		Target{
-			OK: false,
+	STATUS := Status{
+		Targets: []Target{
+			Target{
+				OK: false,
+			},
 		},
 	}
 	STATUS.State.OK = false

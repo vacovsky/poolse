@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func findLongestPollingInterval(targets []Target) int {
 	longest := 0
 	for i := range targets {
@@ -8,4 +10,10 @@ func findLongestPollingInterval(targets []Target) int {
 		}
 	}
 	return longest
+}
+
+func showVersion() string {
+	name := APPNAME + " " + VERSION
+	fmt.Println(name)
+	return name
 }

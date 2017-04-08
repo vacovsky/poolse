@@ -18,3 +18,9 @@ func TestFindLongestRefresh(t *testing.T) {
 		t.Errorf("longest polling interval should be 15")
 	}
 }
+
+func TestShowVersion(t *testing.T) {
+	if showVersion() != APPNAME+" "+VERSION {
+		t.Errorf("showVersion should return Foo Bar")
+	}
+}
