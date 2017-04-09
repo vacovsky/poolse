@@ -23,6 +23,7 @@ func settingsReloadWeb(rw http.ResponseWriter, req *http.Request) {
 	} else {
 		SETTINGS.LastReload = time.Now()
 		WG.Add(1)
+
 		go SETTINGS.reloadSettings()
 		// show caller new settings
 		io.WriteString(rw, fmt.Sprintf("Settings are being reloaded. This could take up to %d seconds.", longest+5))

@@ -17,7 +17,9 @@ func main() {
 		// give the targets a bit to catch up
 		time.Sleep(time.Duration(len(STATUS.Targets)) * time.Second)
 		if STATUS.isOk() {
+			STATUSMUTEX.Lock()
 			STATUS.State.OK = true
+			STATUSMUTEX.Unlock()
 		}
 	}
 	WG.Wait()

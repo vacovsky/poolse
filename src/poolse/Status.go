@@ -25,13 +25,7 @@ func (s *Status) startMonitor() {
 
 func (s *Status) toggleOn() {
 	// check all endpoints, and if all pass the checks, set STATUS.State to true
-	safe := true
-	for _, t := range s.Targets {
-		if !t.OK {
-			safe = false
-		}
-	}
-	s.State.OK = safe
+	s.State.OK = s.isOk()
 }
 
 func (s *Status) toggleOff() {
@@ -39,11 +33,16 @@ func (s *Status) toggleOff() {
 }
 
 func (s *Status) toggle() {
+	STATUSMUTEX.Lock()
 	s.State.OK = s.isOk()
+	STATUSMUTEX.Unlock()
 }
 
 func (s Status) isOk() bool {
 	ok := true
+	STATUSMUTEX.Lock()
+	defer STATUSMUTEX.Unlock()
+
 	for _, t := range s.Targets {
 		if !t.OK {
 			ok = false

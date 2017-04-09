@@ -4,26 +4,39 @@ import (
 	"sync"
 )
 
-// VERSION of application
-const VERSION = "0.3.16"
+const (
+	// VERSION of application
+	VERSION = "0.4.0"
 
-// APPNAME of application.  One place to change it everywhere else.  :shrug:
-const APPNAME = "Poolse"
+	// APPNAME of application.  One place to change it everywhere else.  :shrug:
+	APPNAME = "Poolse"
+)
 
-// WG contains list of running goroutines
-var WG sync.WaitGroup
+var (
+	// WG contains list of running goroutines
+	WG sync.WaitGroup
 
-// SETTINGS Contains the loaded settings for the application
-var SETTINGS Settings
+	// SETTINGS Contains the loaded settings for the application
+	SETTINGS Settings
 
-// STATUS hold the last results of a status poll of the target application
-var STATUS Status
+	// SETTINGSMUTEX for manipulating global SETTINGS safely
+	SETTINGSMUTEX = &sync.Mutex{}
 
-// RTARGETS is how we tell goroutines to stop and reasses the configuration
-var RTARGETS []int
+	// STATUS hold the last results of a status poll of the target application
+	STATUS Status
 
-// RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
-var RTNULLIFY int
+	// RTARGETS is how we tell goroutines to stop and reassess the configuration
+	RTARGETS []int
 
-// SERVEDCOUNT is the running counter of requests served
-var SERVEDCOUNT int64
+	// RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
+	RTNULLIFY int
+
+	// RTMUTEX is the thread safety for RTARGETS
+	RTMUTEX = &sync.Mutex{}
+
+	// SERVEDCOUNT is the running counter of requests served
+	SERVEDCOUNT int64
+
+	// STATUSMUTEX for controlling access to STATUS
+	STATUSMUTEX = &sync.Mutex{}
+)
