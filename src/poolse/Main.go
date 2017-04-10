@@ -13,10 +13,16 @@ func main() {
 	// Start the Web application.
 	go startWeb()
 
-	if SETTINGS.State.StartupState {
+	SETTINGSMUTEX.Lock()
+	ss := SETTINGS.State.StartupState
+	SETTINGSMUTEX.Unlock()
+	tt := len(STATUS.Targets)
+
+	if ss {
 		// give the targets a bit to catch up
-		time.Sleep(time.Duration(len(STATUS.Targets)) * time.Second)
-		if STATUS.isOk() {
+		time.Sleep(time.Duration(tt) * time.Second)
+		okay := STATUS.isOk()
+		if okay {
 			STATUSMUTEX.Lock()
 			STATUS.State.OK = true
 			STATUSMUTEX.Unlock()

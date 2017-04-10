@@ -92,16 +92,13 @@ func (t *Target) checkHealth() bool {
 
 	r, err := client.Do(req)
 	if err != nil {
-		if SETTINGS.Service.Debug {
-			fmt.Println(err)
-		}
 		return false
 	}
+	defer r.Body.Close()
 
 	// if unable to connect, mark failed and move on
 	if err != nil {
 		if r != nil && r.Body != nil {
-			r.Body.Close()
 			return false
 		}
 

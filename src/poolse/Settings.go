@@ -31,9 +31,13 @@ func (s *Settings) load() {
 func (s *Settings) checkStartupState() {
 	WG.Add(1)
 	go func() {
-		if s.State.StartupState {
+		SETTINGSMUTEX.Lock()
+		ss := s.State.StartupState
+		tt := s.Targets
+		SETTINGSMUTEX.Unlock()
+		if ss {
 			// give the targets a bit to catch up
-			time.Sleep(time.Duration(findLongestPollingInterval(s.Targets)+3) * time.Second)
+			time.Sleep(time.Duration(findLongestPollingInterval(tt)+3) * time.Second)
 			if STATUS.isOk() {
 				STATUSMUTEX.Lock()
 				STATUS.State.OK = true
@@ -74,11 +78,16 @@ func (s *Settings) parseSettingsFile() {
 	}
 
 	// apply the settings state to the STATUS state
+	STATUSMUTEX.Lock()
 	STATUS.State = s.State
+	STATUSMUTEX.Unlock()
 
 }
 
 func (s *Settings) populateTargets() {
+	SETTINGSMUTEX.Lock()
+	STATUSMUTEX.Lock()
+
 	STATUS.Version = VERSION
 	for i := range s.Targets {
 		s.Targets[i].ID = i
@@ -97,6 +106,8 @@ func (s *Settings) populateTargets() {
 			STATUS.Targets,
 			s.Targets[i])
 	}
+	SETTINGSMUTEX.Unlock()
+	STATUSMUTEX.Unlock()
 }
 
 func (s *Settings) reloadSettings() {
@@ -136,8 +147,8 @@ func (s *Settings) stopAllTargetMonitors() {
 
 	// set SETTINGS and STATUS to empty struct
 	SETTINGSMUTEX.Lock()
-	defer SETTINGSMUTEX.Unlock()
 	SETTINGS = Settings{}
+	SETTINGSMUTEX.Unlock()
 
 	STATUSMUTEX.Lock()
 	defer STATUSMUTEX.Unlock()

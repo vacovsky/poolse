@@ -41,14 +41,13 @@ func (s *Status) toggle() {
 func (s Status) isOk() bool {
 	ok := true
 	STATUSMUTEX.Lock()
-	defer STATUSMUTEX.Unlock()
-
 	for _, t := range s.Targets {
 		if !t.OK {
 			ok = false
 			break
 		}
 	}
+	STATUSMUTEX.Unlock()
 	return ok
 }
 
