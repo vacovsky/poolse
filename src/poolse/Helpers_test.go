@@ -31,7 +31,6 @@ func TestShowVersion(t *testing.T) {
 }
 
 func logTraffic() string {
-	logTraffic()
 	pc, _, _, _ := runtime.Caller(1)
 	return runtime.FuncForPC(pc).Name()
 }
