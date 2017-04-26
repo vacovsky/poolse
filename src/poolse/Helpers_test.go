@@ -1,8 +1,12 @@
 package main
 
-import "testing"
+import (
+	"runtime"
+	"testing"
+)
 
 func TestFindLongestRefresh(t *testing.T) {
+	logTraffic()
 	ts := []Target{
 		Target{
 			PollingInterval: 7,
@@ -20,8 +24,14 @@ func TestFindLongestRefresh(t *testing.T) {
 }
 
 func TestShowVersion(t *testing.T) {
+	logTraffic()
+
 	if showVersion() != APPNAME+" "+VERSION {
 		t.Errorf("showVersion should return Foo Bar")
 	}
 }
 
+func logTraffic() string {
+	pc, _, _, _ := runtime.Caller(1)
+	return runtime.FuncForPC(pc).Name()
+}

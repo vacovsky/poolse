@@ -15,7 +15,8 @@ type State struct {
 }
 
 func (s *State) saveState(stateFile string) {
-	// load administrative_state from file, and impart value to the SETTINGS.State.AdministrativeState field
+
+	// save STATUS.State.AdministrativeState to file
 	f, err := os.Create(stateFile)
 	defer f.Close()
 	if err != nil {
@@ -30,7 +31,7 @@ func (s *State) saveState(stateFile string) {
 }
 
 func (s *State) loadState(stateFile string) {
-	// save STATUS.State.AdministrativeState to file
+	// load administrative_state from file, and impart value to the SETTINGS.State.AdministrativeState field
 	v, err := ioutil.ReadFile(stateFile)
 	if err != nil {
 		fmt.Println(err)

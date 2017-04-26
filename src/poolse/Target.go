@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -24,10 +25,12 @@ type Target struct {
 	UpCountThreshold          int64     `json:"up_count_threshold"` // this many UpCounts before marked OK again
 	DownCount                 int64     `json:"down_count"`
 	DownCountThreshold        int64     `json:"down_count_threshold"` // this many DownCounts before marked offline
+	Mutex                     *sync.Mutex
 }
 
 func (t *Target) shouldReload() bool {
 	ok := false
+	RTMUTEX.Lock()
 	for i := range RTARGETS {
 		if t.ID == RTARGETS[i] && !ok {
 			ok = true
@@ -36,14 +39,16 @@ func (t *Target) shouldReload() bool {
 			RTNULLIFY++
 		}
 	}
+	RTMUTEX.Unlock()
 	return ok
 }
 
-// Monitor initiates the target montitor using target properties
+// Monitor initiates the target monitor using target properties
 func (t *Target) Monitor() {
 	defer WG.Done()
 	for !t.shouldReload() {
-		// this is the call to proceedurally perform all checks
+		STATUSMUTEX.Lock()
+		// this is the call to procedurally perform all checks
 		thisIterState := t.checkHealth()
 		thisIterState = t.validateUpDownThresholds(thisIterState)
 
@@ -52,20 +57,23 @@ func (t *Target) Monitor() {
 		if t.OK {
 			t.LastOK = t.LastChecked
 		}
+		STATUSMUTEX.Unlock()
+
 		// take a snooze
 		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
-	}
 
+	}
+	RTMUTEX.Lock()
 	if RTNULLIFY == len(RTARGETS) {
 		RTARGETS = []int{}
 		RTNULLIFY = 0
 	}
-
+	RTMUTEX.Unlock()
 	if t.DownCount > 2147483640 {
-		t.DownCount = 0
+		t.DownCount = t.DownCountThreshold + 1
 	}
 	if t.UpCount > 2147483640 {
-		t.UpCount = 0
+		t.UpCount = t.UpCountThreshold + 1
 	}
 	return
 }
@@ -84,16 +92,13 @@ func (t *Target) checkHealth() bool {
 
 	r, err := client.Do(req)
 	if err != nil {
-		if SETTINGS.Service.Debug {
-			fmt.Println(err)
-		}
 		return false
 	}
+	defer r.Body.Close()
 
 	// if unable to connect, mark failed and move on
 	if err != nil {
 		if r != nil && r.Body != nil {
-			r.Body.Close()
 			return false
 		}
 

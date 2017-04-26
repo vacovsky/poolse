@@ -31,11 +31,17 @@ func (s *Settings) load() {
 func (s *Settings) checkStartupState() {
 	WG.Add(1)
 	go func() {
-		if s.State.StartupState {
+		SETTINGSMUTEX.Lock()
+		ss := s.State.StartupState
+		tt := s.Targets
+		SETTINGSMUTEX.Unlock()
+		if ss {
 			// give the targets a bit to catch up
-			time.Sleep(time.Duration(findLongestPollingInterval(s.Targets)+3) * time.Second)
+			time.Sleep(time.Duration(findLongestPollingInterval(tt)+3) * time.Second)
 			if STATUS.isOk() {
+				STATUSMUTEX.Lock()
 				STATUS.State.OK = true
+				STATUSMUTEX.Unlock()
 			}
 		}
 		WG.Done()
@@ -72,11 +78,16 @@ func (s *Settings) parseSettingsFile() {
 	}
 
 	// apply the settings state to the STATUS state
+	STATUSMUTEX.Lock()
 	STATUS.State = s.State
+	STATUSMUTEX.Unlock()
 
 }
 
 func (s *Settings) populateTargets() {
+	SETTINGSMUTEX.Lock()
+	STATUSMUTEX.Lock()
+
 	STATUS.Version = VERSION
 	for i := range s.Targets {
 		s.Targets[i].ID = i
@@ -95,31 +106,51 @@ func (s *Settings) populateTargets() {
 			STATUS.Targets,
 			s.Targets[i])
 	}
+	SETTINGSMUTEX.Unlock()
+	STATUSMUTEX.Unlock()
 }
 
 func (s *Settings) reloadSettings() {
-	s.stopAllTargetMonitors()
-	// repopulate targets from config file, presumably updated with new stuff
 
+	s.stopAllTargetMonitors()
+
+	// repopulate targets from config file, presumably updated with new stuff
 	s.parseSettingsFile()
 	s.populateTargets()
 
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()
 	s.checkStartupState()
+	WG.Done()
 }
 
 func (s *Settings) stopAllTargetMonitors() {
+	RTMUTEX.Lock()
 	for i := range s.Targets {
 		RTARGETS = append(RTARGETS, s.Targets[i].ID)
 	}
+	RTMUTEX.Unlock()
+	waitingForReset := true
+	// wait for all target goroutines to exit, leaving only main and http
+	for !waitingForReset {
+		RTMUTEX.Lock()
+		defer RTMUTEX.Unlock()
+		if !(len(RTARGETS) > 0) {
+			RTMUTEX.Unlock()
+			time.Sleep(time.Duration(1) * time.Second)
+		} else {
+			RTMUTEX.Unlock()
+			waitingForReset = false
+		}
 
-	// wait for all target gorountines to exit, leaving only main and http
-	for len(RTARGETS) > 0 {
-		time.Sleep(time.Duration(1) * time.Second)
 	}
 
-	// set tagets to empty slice
+	// set SETTINGS and STATUS to empty struct
+	SETTINGSMUTEX.Lock()
 	SETTINGS = Settings{}
+	SETTINGSMUTEX.Unlock()
+
+	STATUSMUTEX.Lock()
+	defer STATUSMUTEX.Unlock()
 	STATUS = Status{}
 }
