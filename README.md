@@ -1,4 +1,4 @@
-# Poolse (formerly Go-Healthchecker)
+# Poolse
 
 ## Features
 
