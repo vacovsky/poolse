@@ -25,6 +25,7 @@ func TestFindLongestRefresh(t *testing.T) {
 
 func TestShowVersion(t *testing.T) {
 	logTraffic()
+
 	if showVersion() != APPNAME+" "+VERSION {
 		t.Errorf("showVersion should return Foo Bar")
 	}
