@@ -28,17 +28,19 @@ func startWeb() {
 		"/toggle/adminoff":   toggleAdminStateOffWeb,
 		"/toggle/adminreset": toggleResetAdminStateWeb,
 		"/toggle/off":        toggleOffWeb,
-		"/toggle":            toggleWeb,
 
-		"/settings":        settingsWeb,
-		"/settings/reload": settingsReloadWeb,
+		"/settings": settingsWeb,
+
+		// disabled this method because there is a bug, and it's safer this way until it gets fixed
+		// "/settings/reload": settingsReloadWeb,
 
 		"/fakesmoke":    fakeSmoke,
 		"/fakehealth":   fakeHealth,
 		"/fakeexpected": fakeExpected,
 
-		// show landing page?
-		"/": displayReadme,
+		// show status as landing page?
+		"/help": displayReadme,
+		"/":     statusWeb,
 	}
 
 	// register routes

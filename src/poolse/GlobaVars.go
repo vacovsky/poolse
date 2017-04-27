@@ -6,7 +6,7 @@ import (
 
 const (
 	// VERSION of application
-	VERSION = "0.4.0"
+	VERSION = "0.4.1"
 
 	// APPNAME of application.  One place to change it everywhere else.  :shrug:
 	APPNAME = "Poolse"
