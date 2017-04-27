@@ -37,11 +37,13 @@ func (s *Settings) checkStartupState() {
 		SETTINGSMUTEX.Unlock()
 		if ss {
 			// give the targets a bit to catch up
-			time.Sleep(time.Duration(findLongestPollingInterval(tt)+3) * time.Second)
+			pi := findLongestPollingInterval(tt)
+			lut := findLargestUpThreshold(tt)
+			wait := (pi * lut) + 3
+			fmt.Printf("Waiting for %d seconds before continuing...", wait)
+			time.Sleep(time.Duration(wait) * time.Second)
 			if STATUS.isOk() {
-				STATUSMUTEX.Lock()
 				STATUS.State.OK = true
-				STATUSMUTEX.Unlock()
 			}
 		}
 		WG.Done()
@@ -125,32 +127,20 @@ func (s *Settings) reloadSettings() {
 }
 
 func (s *Settings) stopAllTargetMonitors() {
-	RTMUTEX.Lock()
 	for i := range s.Targets {
 		RTARGETS = append(RTARGETS, s.Targets[i].ID)
 	}
-	RTMUTEX.Unlock()
 	waitingForReset := true
 	// wait for all target goroutines to exit, leaving only main and http
 	for !waitingForReset {
-		RTMUTEX.Lock()
-		defer RTMUTEX.Unlock()
 		if !(len(RTARGETS) > 0) {
-			RTMUTEX.Unlock()
 			time.Sleep(time.Duration(1) * time.Second)
 		} else {
-			RTMUTEX.Unlock()
 			waitingForReset = false
 		}
-
 	}
 
 	// set SETTINGS and STATUS to empty struct
-	SETTINGSMUTEX.Lock()
 	SETTINGS = Settings{}
-	SETTINGSMUTEX.Unlock()
-
-	STATUSMUTEX.Lock()
-	defer STATUSMUTEX.Unlock()
 	STATUS = Status{}
 }

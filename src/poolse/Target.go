@@ -79,6 +79,16 @@ func (t *Target) Monitor() {
 }
 
 func (t *Target) checkHealth() bool {
+	defer func() {
+		if STATUS.State.StartupState {
+			if STATUS.isOk() {
+				STATUS.State.OK = true
+			} else {
+				STATUS.State.OK = false
+			}
+		}
+	}()
+
 	// get response body
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", t.Endpoint, nil)
@@ -91,26 +101,26 @@ func (t *Target) checkHealth() bool {
 	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
 
 	r, err := client.Do(req)
+
+	// if unable to connect, mark failed and move on
 	if err != nil {
 		return false
 	}
 	defer r.Body.Close()
 
-	// if unable to connect, mark failed and move on
-	if err != nil {
-		if r != nil && r.Body != nil {
-			return false
-		}
-
-		if !t.validateResponseStatusCode(r) {
-			return false
-		}
-
-		bodyBytes, _ := ioutil.ReadAll(r.Body)
-		if !t.validateResultBody(string(bodyBytes)) {
-			return false
-		}
+	if r == nil && r.Body == nil {
+		return false
 	}
+
+	if !t.validateResponseStatusCode(r) {
+		return false
+	}
+
+	bodyBytes, _ := ioutil.ReadAll(r.Body)
+	if !t.validateResultBody(string(bodyBytes)) {
+		return false
+	}
+
 	return true
 }
 
