@@ -4,3 +4,48 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+changeStringToArray	src/poolse/report/poolse-1491602109.html	/^				function changeStringToArray(obj){$/;"	f
+changeStringToArray	src/poolse/report/poolse-1491604491.html	/^				function changeStringToArray(obj){$/;"	f
+changeStringToArray	src/poolse/report/poolse-1491604720.html	/^				function changeStringToArray(obj){$/;"	f
+changeStringToArray	src/poolse/report/poolse-1491604784.html	/^				function changeStringToArray(obj){$/;"	f
+changeStringToArray	src/poolse/report/poolse-1491606399.html	/^				function changeStringToArray(obj){$/;"	f
+changeToRelativePath	src/poolse/report/poolse-1491602109.html	/^				function changeToRelativePath(array, key){$/;"	f
+changeToRelativePath	src/poolse/report/poolse-1491604491.html	/^				function changeToRelativePath(array, key){$/;"	f
+changeToRelativePath	src/poolse/report/poolse-1491604720.html	/^				function changeToRelativePath(array, key){$/;"	f
+changeToRelativePath	src/poolse/report/poolse-1491604784.html	/^				function changeToRelativePath(array, key){$/;"	f
+changeToRelativePath	src/poolse/report/poolse-1491606399.html	/^				function changeToRelativePath(array, key){$/;"	f
+copycodeResult	src/poolse/report/poolse-1491602109.html	/^				function copycodeResult(){$/;"	f
+copycodeResult	src/poolse/report/poolse-1491604491.html	/^				function copycodeResult(){$/;"	f
+copycodeResult	src/poolse/report/poolse-1491604720.html	/^				function copycodeResult(){$/;"	f
+copycodeResult	src/poolse/report/poolse-1491604784.html	/^				function copycodeResult(){$/;"	f
+copycodeResult	src/poolse/report/poolse-1491606399.html	/^				function copycodeResult(){$/;"	f
+deadcodeResult	src/poolse/report/poolse-1491602109.html	/^				function deadcodeResult(){$/;"	f
+deadcodeResult	src/poolse/report/poolse-1491604491.html	/^				function deadcodeResult(){$/;"	f
+deadcodeResult	src/poolse/report/poolse-1491604720.html	/^				function deadcodeResult(){$/;"	f
+deadcodeResult	src/poolse/report/poolse-1491604784.html	/^				function deadcodeResult(){$/;"	f
+deadcodeResult	src/poolse/report/poolse-1491606399.html	/^				function deadcodeResult(){$/;"	f
+goSimpleResult	src/poolse/report/poolse-1491602109.html	/^				function goSimpleResult(array, key, level){$/;"	f
+goSimpleResult	src/poolse/report/poolse-1491604491.html	/^				function goSimpleResult(array, key, level){$/;"	f
+goSimpleResult	src/poolse/report/poolse-1491604720.html	/^				function goSimpleResult(array, key, level){$/;"	f
+goSimpleResult	src/poolse/report/poolse-1491604784.html	/^				function goSimpleResult(array, key, level){$/;"	f
+goSimpleResult	src/poolse/report/poolse-1491606399.html	/^				function goSimpleResult(array, key, level){$/;"	f
+gocycloResult	src/poolse/report/poolse-1491602109.html	/^				function gocycloResult(){$/;"	f
+gocycloResult	src/poolse/report/poolse-1491604491.html	/^				function gocycloResult(){$/;"	f
+gocycloResult	src/poolse/report/poolse-1491604720.html	/^				function gocycloResult(){$/;"	f
+gocycloResult	src/poolse/report/poolse-1491604784.html	/^				function gocycloResult(){$/;"	f
+gocycloResult	src/poolse/report/poolse-1491606399.html	/^				function gocycloResult(){$/;"	f
+gotestResult	src/poolse/report/poolse-1491602109.html	/^				function gotestResult(){$/;"	f
+gotestResult	src/poolse/report/poolse-1491604491.html	/^				function gotestResult(){$/;"	f
+gotestResult	src/poolse/report/poolse-1491604720.html	/^				function gotestResult(){$/;"	f
+gotestResult	src/poolse/report/poolse-1491604784.html	/^				function gotestResult(){$/;"	f
+gotestResult	src/poolse/report/poolse-1491606399.html	/^				function gotestResult(){$/;"	f
+renderGocyclo	src/poolse/report/poolse-1491602109.html	/^				function renderGocyclo(){$/;"	f
+renderGocyclo	src/poolse/report/poolse-1491604491.html	/^				function renderGocyclo(){$/;"	f
+renderGocyclo	src/poolse/report/poolse-1491604720.html	/^				function renderGocyclo(){$/;"	f
+renderGocyclo	src/poolse/report/poolse-1491604784.html	/^				function renderGocyclo(){$/;"	f
+renderGocyclo	src/poolse/report/poolse-1491606399.html	/^				function renderGocyclo(){$/;"	f
+scoreEmoj	src/poolse/report/poolse-1491602109.html	/^				function scoreEmoj(){$/;"	f
+scoreEmoj	src/poolse/report/poolse-1491604491.html	/^				function scoreEmoj(){$/;"	f
+scoreEmoj	src/poolse/report/poolse-1491604720.html	/^				function scoreEmoj(){$/;"	f
+scoreEmoj	src/poolse/report/poolse-1491604784.html	/^				function scoreEmoj(){$/;"	f
+scoreEmoj	src/poolse/report/poolse-1491606399.html	/^				function scoreEmoj(){$/;"	f

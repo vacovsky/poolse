@@ -90,7 +90,17 @@ func (t *Target) checkHealth() bool {
 	}()
 
 	// get response body
-	client := &http.Client{}
+	var client &http.Client
+	if SETTINGS.FollowRedirect {
+	client = &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	} else {
+			client = &http.Client{}
+	}
+	
 	req, err := http.NewRequest("GET", t.Endpoint, nil)
 	if err != nil {
 		if SETTINGS.Service.Debug {
