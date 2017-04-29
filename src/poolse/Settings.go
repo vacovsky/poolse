@@ -14,10 +14,11 @@ type Settings struct {
 	Targets    []Target `json:"targets"`
 	LastReload time.Time
 	Service    struct {
-		StateFileName string `json:"state_file_name"`
-		HTTPPort      string `json:"http_port"` // port to listen on for web interface (5704)
-		Debug         bool   `json:"debug"`
-		ShowHTTPLog   bool   `json:"show_http_log"`
+		StateFileName   string `json:"state_file_name"`
+		HTTPPort        string `json:"http_port"` // port to listen on for web interface (5704)
+		Debug           bool   `json:"debug"`
+		ShowHTTPLog     bool   `json:"show_http_log"`
+		FollowRedirects bool   `json:"follow_redirects"`
 	} `json:"service"`
 }
 
