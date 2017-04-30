@@ -12,6 +12,17 @@ type Status struct {
 }
 
 func (s *Status) startMonitor() {
+	updater := make(chan *Target)
+
+	go func() {
+		WG.Add(1)
+		defer WG.Done()
+
+		for {
+			var tt = <-updater
+		}
+	}()
+
 	for i := range STATUS.Targets {
 		if SETTINGS.Service.Debug {
 			fmt.Println("Starting ",
@@ -19,7 +30,7 @@ func (s *Status) startMonitor() {
 				s.Targets[i].Endpoint)
 		}
 		WG.Add(1)
-		go s.Targets[i].Monitor()
+		go s.Targets[i].Monitor(updater)
 	}
 }
 
@@ -33,9 +44,7 @@ func (s *Status) toggleOff() {
 }
 
 func (s *Status) toggle() {
-	STATUSMUTEX.Lock()
 	s.State.OK = s.isOk()
-	STATUSMUTEX.Unlock()
 }
 
 func (s Status) isOk() bool {

@@ -19,9 +19,6 @@ var (
 	// SETTINGS Contains the loaded settings for the application
 	SETTINGS Settings
 
-	// SETTINGSMUTEX for manipulating global SETTINGS safely
-	SETTINGSMUTEX = &sync.Mutex{}
-
 	// STATUS hold the last results of a status poll of the target application
 	STATUS Status
 
@@ -36,7 +33,4 @@ var (
 
 	// SERVEDCOUNT is the running counter of requests served
 	SERVEDCOUNT int64
-
-	// STATUSMUTEX for controlling access to STATUS
-	STATUSMUTEX = &sync.Mutex{}
 )

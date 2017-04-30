@@ -32,10 +32,8 @@ func (s *Settings) load() {
 func (s *Settings) checkStartupState() {
 	WG.Add(1)
 	go func() {
-		SETTINGSMUTEX.Lock()
 		ss := s.State.StartupState
 		tt := s.Targets
-		SETTINGSMUTEX.Unlock()
 		if ss {
 			// give the targets a bit to catch up
 			pi := findLongestPollingInterval(tt)
@@ -81,16 +79,11 @@ func (s *Settings) parseSettingsFile() {
 	}
 
 	// apply the settings state to the STATUS state
-	STATUSMUTEX.Lock()
 	STATUS.State = s.State
-	STATUSMUTEX.Unlock()
 
 }
 
 func (s *Settings) populateTargets() {
-	SETTINGSMUTEX.Lock()
-	STATUSMUTEX.Lock()
-
 	STATUS.Version = VERSION
 	for i := range s.Targets {
 		s.Targets[i].ID = i
@@ -109,8 +102,6 @@ func (s *Settings) populateTargets() {
 			STATUS.Targets,
 			s.Targets[i])
 	}
-	SETTINGSMUTEX.Unlock()
-	STATUSMUTEX.Unlock()
 }
 
 func (s *Settings) reloadSettings() {

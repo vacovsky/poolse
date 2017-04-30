@@ -20,9 +20,7 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 		blob, _ = json.Marshal(&STATUS.Targets[id])
 		result = STATUS.Targets[id].OK
 	} else {
-		STATUSMUTEX.Lock()
 		blob, _ = json.Marshal(&STATUS)
-		STATUSMUTEX.Unlock()
 		result = STATUS.isOk()
 	}
 
