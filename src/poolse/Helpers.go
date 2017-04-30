@@ -27,3 +27,13 @@ func showVersion() string {
 	fmt.Println(name)
 	return name
 }
+
+func GlobalWaitGroupHelper(changeDir bool) {
+	WGMUTEX.Lock()
+	if changeDir {
+		WG.Add(1)
+	} else {
+		WG.Done()
+	}
+	WGMUTEX.Unlock()
+}

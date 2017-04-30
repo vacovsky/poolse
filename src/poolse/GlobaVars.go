@@ -22,15 +22,15 @@ var (
 	// STATUS hold the last results of a status poll of the target application
 	STATUS Status
 
-	// RTARGETS is how we tell goroutines to stop and reassess the configuration
-	RTARGETS []int
-
-	// RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
-	RTNULLIFY int
-
-	// RTMUTEX is the thread safety for RTARGETS
-	RTMUTEX = &sync.Mutex{}
-
 	// SERVEDCOUNT is the running counter of requests served
 	SERVEDCOUNT int64
+
+	//TARGETSTOP used to tell targets to cease activity and await reloaded settings
+	TARGETSTOP = false
+
+	// WGMUTEX protects the global waitgroup from race issues
+	WGMUTEX sync.Mutex
+
+	// StatusMu protects the global Status struct from race issues
+	StatusMu sync.Mutex
 )

@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 // Status indicates the state of the application being monitored
 type Status struct {
 	State   State
@@ -11,25 +7,48 @@ type Status struct {
 	Version string
 }
 
+func counterCleaner(tt *Target) {
+	if tt.DownCount > 2147483640 {
+		tt.DownCount = tt.DownCountThreshold + 1
+	}
+	if tt.UpCount > 2147483640 {
+		tt.UpCount = tt.UpCountThreshold + 1
+	}
+}
+
 func (s *Status) startMonitor() {
 	updater := make(chan *Target)
-
 	go func() {
-		WG.Add(1)
-		defer WG.Done()
+		GlobalWaitGroupHelper(true)
+		defer GlobalWaitGroupHelper(false)
 
-		for {
+		for !TARGETSTOP {
+			// receive the target pointer from the channel
 			var tt = <-updater
+
+			func() {
+				StatusMu.Lock()
+				defer StatusMu.Unlock()
+				if STATUS.State.StartupState {
+					if STATUS.isOk() {
+						STATUS.State.OK = true
+					} else {
+						STATUS.State.OK = false
+					}
+				}
+			}()
+
+			// ensure counter isn't going to break
+			counterCleaner(tt)
+
+			// send it back to monitor stuff
+			go tt.Monitor(updater)
 		}
+		close(updater)
 	}()
 
+	// loop over targets and kick them off to get the ball rolling.  after this, the lambda handles it
 	for i := range STATUS.Targets {
-		if SETTINGS.Service.Debug {
-			fmt.Println("Starting ",
-				s.Targets[i].Name,
-				s.Targets[i].Endpoint)
-		}
-		WG.Add(1)
 		go s.Targets[i].Monitor(updater)
 	}
 }
@@ -89,6 +108,8 @@ func (s *Status) checkStatusByID(id int) bool {
 }
 
 func (s *Status) checkStatus() bool {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	if (s.isOk() && s.State.OK &&
 		!(s.State.AdministrativeState == "AdminOff")) ||
 		s.State.AdministrativeState == "AdminOn" {

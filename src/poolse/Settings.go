@@ -30,7 +30,7 @@ func (s *Settings) load() {
 }
 
 func (s *Settings) checkStartupState() {
-	WG.Add(1)
+	GlobalWaitGroupHelper(true)
 	go func() {
 		ss := s.State.StartupState
 		tt := s.Targets
@@ -41,11 +41,14 @@ func (s *Settings) checkStartupState() {
 			wait := (pi * lut) + 3
 			fmt.Printf("Waiting for %d seconds before continuing...", wait)
 			time.Sleep(time.Duration(wait) * time.Second)
+
+			StatusMu.Lock()
 			if STATUS.isOk() {
 				STATUS.State.OK = true
 			}
+			StatusMu.Unlock()
 		}
-		WG.Done()
+		GlobalWaitGroupHelper(false)
 	}()
 }
 
@@ -105,34 +108,16 @@ func (s *Settings) populateTargets() {
 }
 
 func (s *Settings) reloadSettings() {
-
-	s.stopAllTargetMonitors()
+	TARGETSTOP = true
 
 	// repopulate targets from config file, presumably updated with new stuff
 	s.parseSettingsFile()
 	s.populateTargets()
 
+	TARGETSTOP = false
+
 	// resume motoring with new targets and settings
 	STATUS.startMonitor()
 	s.checkStartupState()
-	WG.Done()
-}
-
-func (s *Settings) stopAllTargetMonitors() {
-	for i := range s.Targets {
-		RTARGETS = append(RTARGETS, s.Targets[i].ID)
-	}
-	waitingForReset := true
-	// wait for all target goroutines to exit, leaving only main and http
-	for !waitingForReset {
-		if !(len(RTARGETS) > 0) {
-			time.Sleep(time.Duration(1) * time.Second)
-		} else {
-			waitingForReset = false
-		}
-	}
-
-	// set SETTINGS and STATUS to empty struct
-	SETTINGS = Settings{}
-	STATUS = Status{}
+	GlobalWaitGroupHelper(false)
 }
