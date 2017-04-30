@@ -36,8 +36,6 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 
 func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 	result := false
-	StatusMu.Lock()
-	defer StatusMu.Unlock()
 
 	req.ParseForm()
 	ppid := req.Form.Get("id")
@@ -61,8 +59,6 @@ func statusSimpleWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func statusSimple2Web(rw http.ResponseWriter, req *http.Request) {
-	StatusMu.Lock()
-	defer StatusMu.Unlock()
 	result := false
 
 	req.ParseForm()
