@@ -95,14 +95,12 @@ func (s *Settings) populateTargets() {
 
 func (s *Settings) reloadSettings() {
 	GlobalWaitGroupHelper(true)
-	stopChan := make(chan bool)
-
-	stopChan <- true
+	StopChan <- true
 	// repopulate targets from config file, presumably updated with new stuff
 	s.parseSettingsFile()
 	s.populateTargets()
 
 	// resume motoring with new targets and settings
-	STATUS.startMonitor(stopChan)
+	STATUS.startMonitor(StopChan)
 	GlobalWaitGroupHelper(false)
 }

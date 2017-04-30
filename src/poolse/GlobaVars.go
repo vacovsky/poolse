@@ -6,7 +6,7 @@ import (
 
 const (
 	// VERSION of application
-	VERSION = "0.4.2"
+	VERSION = "0.5.1"
 
 	// APPNAME of application.  One place to change it everywhere else.  :shrug:
 	APPNAME = "Poolse"
@@ -25,9 +25,6 @@ var (
 	// SERVEDCOUNT is the running counter of requests served
 	SERVEDCOUNT int64
 
-	//TARGETSTOP used to tell targets to cease activity and await reloaded settings
-	TARGETSTOP = false
-
 	// WGMUTEX protects the global waitgroup from race issues
 	WGMUTEX sync.Mutex
 
@@ -36,4 +33,7 @@ var (
 
 	// SettingsMu protects the global Status struct from race issues
 	SettingsMu sync.Mutex
+
+	// StopChan is used to tell workers to start or stop
+	StopChan = make(chan bool)
 )

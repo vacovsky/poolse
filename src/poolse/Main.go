@@ -8,8 +8,7 @@ func main() {
 
 	// Monitor application for health status
 	GlobalWaitGroupHelper(true)
-	go STATUS.startMonitor(make(chan bool))
-	// STATUS.startMonitor()
+	go STATUS.startMonitor(StopChan)
 
 	// Start the Web application.
 	go startWeb()

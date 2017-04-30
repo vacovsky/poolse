@@ -1,5 +1,9 @@
 package main
 
+import (
+	"sync"
+)
+
 // Status indicates the state of the application being monitored
 type Status struct {
 	State   State
@@ -22,12 +26,21 @@ func (s *Status) startMonitor(stopChan chan bool) {
 		GlobalWaitGroupHelper(true)
 		defer GlobalWaitGroupHelper(false)
 
+		stopMu := sync.Mutex{}
 		stop := false
+		var stopControl = func(s bool) {
+			stopMu.Lock()
+			defer stopMu.Unlock()
+			stop = s
+		}
 		go func() {
 			GlobalWaitGroupHelper(true)
 			defer GlobalWaitGroupHelper(false)
-			stop = <-stopChan
+			for {
+				stopControl(<-stopChan)
+			}
 		}()
+
 		for !stop {
 			// receive the target pointer from the channel
 			var tt = <-updater
@@ -50,7 +63,7 @@ func (s *Status) startMonitor(stopChan chan bool) {
 			// send it back to monitor stuff
 			go tt.Monitor(updater)
 		}
-		close(updater)
+		// close(updater)
 	}()
 
 	// loop over targets and kick them off to get the ball rolling.  after this, the lambda handles it
