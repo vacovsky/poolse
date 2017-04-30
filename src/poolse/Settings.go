@@ -23,36 +23,17 @@ type Settings struct {
 }
 
 func (s *Settings) load() {
+	// fill settings struct from config file
 	s.parseSettingsFile()
 
-	// Populate global STATUS with targets from config file
+	// copy Settings struct targets to Status
 	s.populateTargets()
 }
 
-func (s *Settings) checkStartupState() {
-	GlobalWaitGroupHelper(true)
-	go func() {
-		ss := s.State.StartupState
-		tt := s.Targets
-		if ss {
-			// give the targets a bit to catch up
-			pi := findLongestPollingInterval(tt)
-			lut := findLargestUpThreshold(tt)
-			wait := (pi * lut) + 3
-			fmt.Printf("Waiting for %d seconds before continuing...", wait)
-			time.Sleep(time.Duration(wait) * time.Second)
-
-			StatusMu.Lock()
-			if STATUS.isOk() {
-				STATUS.State.OK = true
-			}
-			StatusMu.Unlock()
-		}
-		GlobalWaitGroupHelper(false)
-	}()
-}
-
 func (s *Settings) parseSettingsFile() {
+	SettingsMu.Lock()
+	defer SettingsMu.Unlock()
+
 	confFile := "../../init/config.json"
 	if len(os.Args) > 1 {
 		confFile = os.Args[1]
@@ -83,10 +64,15 @@ func (s *Settings) parseSettingsFile() {
 
 	// apply the settings state to the STATUS state
 	STATUS.State = s.State
-
 }
 
 func (s *Settings) populateTargets() {
+	StatusMu.Lock()
+	SettingsMu.Lock()
+
+	defer StatusMu.Unlock()
+	defer SettingsMu.Unlock()
+
 	STATUS.Version = VERSION
 	for i := range s.Targets {
 		s.Targets[i].ID = i
@@ -108,16 +94,15 @@ func (s *Settings) populateTargets() {
 }
 
 func (s *Settings) reloadSettings() {
-	TARGETSTOP = true
+	GlobalWaitGroupHelper(true)
+	stopChan := make(chan bool)
 
+	stopChan <- true
 	// repopulate targets from config file, presumably updated with new stuff
 	s.parseSettingsFile()
 	s.populateTargets()
 
-	TARGETSTOP = false
-
 	// resume motoring with new targets and settings
-	STATUS.startMonitor()
-	s.checkStartupState()
+	STATUS.startMonitor(stopChan)
 	GlobalWaitGroupHelper(false)
 }

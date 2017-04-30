@@ -33,4 +33,7 @@ var (
 
 	// StatusMu protects the global Status struct from race issues
 	StatusMu sync.Mutex
+
+	// SettingsMu protects the global Status struct from race issues
+	SettingsMu sync.Mutex
 )

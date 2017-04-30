@@ -9,6 +9,9 @@ import (
 )
 
 func settingsWeb(rw http.ResponseWriter, req *http.Request) {
+	SettingsMu.Lock()
+	defer SettingsMu.Unlock()
+
 	blob, err := json.Marshal(&SETTINGS)
 	if err != nil {
 		fmt.Println(err, err.Error())
@@ -17,6 +20,11 @@ func settingsWeb(rw http.ResponseWriter, req *http.Request) {
 }
 
 func settingsReloadWeb(rw http.ResponseWriter, req *http.Request) {
+	StatusMu.Lock()
+	SettingsMu.Lock()
+	defer SettingsMu.Unlock()
+	defer StatusMu.Unlock()
+
 	ts := STATUS.Targets
 
 	longest := findLongestPollingInterval(ts)

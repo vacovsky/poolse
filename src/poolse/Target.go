@@ -38,7 +38,6 @@ func (t *Target) Monitor(ch chan *Target) {
 	func() {
 		StatusMu.Lock()
 		defer StatusMu.Unlock()
-
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
 		if t.OK {
@@ -56,6 +55,7 @@ func (t *Target) Monitor(ch chan *Target) {
 func (t *Target) checkHealth() bool {
 	// get response body
 	var client = &http.Client{}
+	
 	if !SETTINGS.Service.FollowRedirects {
 		client = &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {

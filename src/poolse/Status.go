@@ -16,13 +16,19 @@ func counterCleaner(tt *Target) {
 	}
 }
 
-func (s *Status) startMonitor() {
+func (s *Status) startMonitor(stopChan chan bool) {
 	updater := make(chan *Target)
 	go func() {
 		GlobalWaitGroupHelper(true)
 		defer GlobalWaitGroupHelper(false)
 
-		for !TARGETSTOP {
+		stop := false
+		go func() {
+			GlobalWaitGroupHelper(true)
+			defer GlobalWaitGroupHelper(false)
+			stop = <-stopChan
+		}()
+		for !stop {
 			// receive the target pointer from the channel
 			var tt = <-updater
 

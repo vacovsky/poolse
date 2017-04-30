@@ -7,7 +7,9 @@ func main() {
 	SETTINGS.load()
 
 	// Monitor application for health status
-	STATUS.startMonitor()
+	GlobalWaitGroupHelper(true)
+	go STATUS.startMonitor(make(chan bool))
+	// STATUS.startMonitor()
 
 	// Start the Web application.
 	go startWeb()
