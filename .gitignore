@@ -6,3 +6,4 @@ tags
 *.dat
 src/poolse/report
 .DS_Store
+init/testconfig.json
