@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -45,8 +44,11 @@ func (t *Target) Monitor(ch chan *Target) {
 		}
 	}()
 
+	StatusMu.Lock()
+	timeout := t.PollingInterval
+	StatusMu.Unlock()
 	// take a snooze based on PollingInterval value
-	time.Sleep(time.Duration(t.PollingInterval) * time.Second)
+	time.Sleep(time.Duration(timeout) * time.Second)
 
 	// return Target pointer to channel and await next call
 	ch <- t
@@ -56,6 +58,7 @@ func (t *Target) checkHealth() bool {
 	// get response body
 	var client = &http.Client{}
 
+	SettingsMu.Lock()
 	if !SETTINGS.Service.FollowRedirects {
 		client = &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -63,12 +66,14 @@ func (t *Target) checkHealth() bool {
 			},
 		}
 	}
+	SettingsMu.Unlock()
 
-	req, err := http.NewRequest("GET", t.Endpoint, nil)
+	StatusMu.Lock()
+	e := t.Endpoint
+	StatusMu.Unlock()
+
+	req, err := http.NewRequest("GET", e, nil)
 	if err != nil {
-		if SETTINGS.Service.Debug {
-			fmt.Println(err)
-		}
 		return false
 	}
 	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
@@ -92,13 +97,13 @@ func (t *Target) checkHealth() bool {
 	if !t.validateResultBody(string(bodyBytes)) {
 		return false
 	}
-
 	return true
 }
 
 func (t *Target) validateUpDownThresholds(curState bool) bool {
 	StatusMu.Lock()
 	defer StatusMu.Unlock()
+
 	newState := true
 	if curState {
 		t.DownCount = 0
@@ -117,6 +122,9 @@ func (t *Target) validateUpDownThresholds(curState bool) bool {
 }
 
 func (t *Target) validateResponseStatusCode(r *http.Response) bool {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
+
 	match := true
 	if t.ExpectedStatusCode != r.StatusCode {
 		match = false
@@ -125,6 +133,9 @@ func (t *Target) validateResponseStatusCode(r *http.Response) bool {
 }
 
 func (t *Target) validateResultBody(body string) bool {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
+
 	r := true
 
 	if len(t.ExpectedResponseStrings) > 0 {

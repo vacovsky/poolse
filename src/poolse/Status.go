@@ -20,6 +20,16 @@ func counterCleaner(tt *Target) {
 	}
 }
 
+func (s *Status) mergeTarget(t *Target) {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
+	// update global status with new target struct info
+	// fmt.Printf("Merging taget data for %d", t.ID)
+	s.Targets[t.ID] = *t
+	// ensure counter isn't going to break
+	counterCleaner(t)
+}
+
 func (s *Status) startMonitor(stopChan chan bool) {
 	updater := make(chan *Target)
 	go func() {
@@ -36,9 +46,7 @@ func (s *Status) startMonitor(stopChan chan bool) {
 		go func() {
 			GlobalWaitGroupHelper(true)
 			defer GlobalWaitGroupHelper(false)
-			for {
-				stopControl(<-stopChan)
-			}
+			stopControl(<-stopChan)
 		}()
 
 		var stopCheck = func() bool {
@@ -50,7 +58,6 @@ func (s *Status) startMonitor(stopChan chan bool) {
 		for {
 			// receive the target pointer from the channel
 			if !stopCheck() {
-				var tt = <-updater
 
 				func() {
 					StatusMu.Lock()
@@ -64,13 +71,14 @@ func (s *Status) startMonitor(stopChan chan bool) {
 					}
 				}()
 
-				// ensure counter isn't going to break
-				counterCleaner(tt)
-
+				var tt = <-updater
+				STATUS.mergeTarget(tt)
 				// send it back to monitor stuff
 				go tt.Monitor(updater)
 			}
-			break
+			if stopCheck() {
+				break
+			}
 		}
 		// close(updater)
 	}()
