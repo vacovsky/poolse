@@ -1,12 +1,14 @@
 package main
 
 func main() {
+
 	showVersion()
 
 	SETTINGS.load()
 
 	// Monitor application for health status
-	STATUS.startMonitor()
+	GlobalWaitGroupHelper(true)
+	go STATUS.startMonitor(StopChan)
 
 	// Start the Web application.
 	go startWeb()

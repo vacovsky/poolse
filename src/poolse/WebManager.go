@@ -29,10 +29,8 @@ func startWeb() {
 		"/toggle/adminreset": toggleResetAdminStateWeb,
 		"/toggle/off":        toggleOffWeb,
 
-		"/settings": settingsWeb,
-
-		// disabled this method because there is a bug, and it's safer this way until it gets fixed
-		// "/settings/reload": settingsReloadWeb,
+		"/settings":        settingsWeb,
+		"/settings/reload": settingsReloadWeb,
 
 		"/fakesmoke":    fakeSmoke,
 		"/fakehealth":   fakeHealth,

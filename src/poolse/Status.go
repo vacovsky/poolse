@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"sync"
 )
 
 // Status indicates the state of the application being monitored
@@ -11,31 +11,93 @@ type Status struct {
 	Version string
 }
 
-func (s *Status) startMonitor() {
-	for i := range STATUS.Targets {
-		if SETTINGS.Service.Debug {
-			fmt.Println("Starting ",
-				s.Targets[i].Name,
-				s.Targets[i].Endpoint)
+func counterCleaner(tt *Target) {
+	if tt.DownCount > 2147483640 {
+		tt.DownCount = tt.DownCountThreshold + 1
+	}
+	if tt.UpCount > 2147483640 {
+		tt.UpCount = tt.UpCountThreshold + 1
+	}
+}
+
+func (s *Status) startMonitor(stopChan chan bool) {
+	updater := make(chan *Target)
+	go func() {
+		GlobalWaitGroupHelper(true)
+		defer GlobalWaitGroupHelper(false)
+
+		stopMu := sync.Mutex{}
+		stop := false
+		var stopControl = func(s bool) {
+			stopMu.Lock()
+			defer stopMu.Unlock()
+			stop = s
 		}
-		WG.Add(1)
-		go s.Targets[i].Monitor()
+		go func() {
+			GlobalWaitGroupHelper(true)
+			defer GlobalWaitGroupHelper(false)
+			for {
+				stopControl(<-stopChan)
+			}
+		}()
+
+		var stopCheck = func() bool {
+			stopMu.Lock()
+			defer stopMu.Unlock()
+			return stop
+		}
+
+		for {
+			// receive the target pointer from the channel
+			if !stopCheck() {
+				var tt = <-updater
+
+				func() {
+					StatusMu.Lock()
+					defer StatusMu.Unlock()
+					if STATUS.State.StartupState {
+						if STATUS.isOk() {
+							STATUS.State.OK = true
+						} else {
+							STATUS.State.OK = false
+						}
+					}
+				}()
+
+				// ensure counter isn't going to break
+				counterCleaner(tt)
+
+				// send it back to monitor stuff
+				go tt.Monitor(updater)
+			}
+			break
+		}
+		// close(updater)
+	}()
+
+	// loop over targets and kick them off to get the ball rolling.  after this, the lambda handles it
+	for i := range STATUS.Targets {
+		go s.Targets[i].Monitor(updater)
 	}
 }
 
 func (s *Status) toggleOn() {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	// check all endpoints, and if all pass the checks, set STATUS.State to true
 	s.State.OK = s.isOk()
 }
 
 func (s *Status) toggleOff() {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	s.State.OK = false
 }
 
 func (s *Status) toggle() {
-	STATUSMUTEX.Lock()
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	s.State.OK = s.isOk()
-	STATUSMUTEX.Unlock()
 }
 
 func (s Status) isOk() bool {
@@ -50,6 +112,8 @@ func (s Status) isOk() bool {
 }
 
 func (s *Status) toggleAdminStateOff() {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	s.State.AdministrativeState = "AdminOff"
 	if s.State.PersistState {
 		s.State.saveState(SETTINGS.Service.StateFileName)
@@ -57,6 +121,8 @@ func (s *Status) toggleAdminStateOff() {
 }
 
 func (s *Status) toggleAdminStateOn() {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	s.State.AdministrativeState = "AdminOn"
 	if s.State.PersistState {
 		s.State.saveState(SETTINGS.Service.StateFileName)
@@ -64,6 +130,8 @@ func (s *Status) toggleAdminStateOn() {
 }
 
 func (s *Status) toggleResetAdminState() {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	s.State.AdministrativeState = ""
 	if s.State.PersistState {
 		s.State.saveState(SETTINGS.Service.StateFileName)
@@ -71,6 +139,8 @@ func (s *Status) toggleResetAdminState() {
 }
 
 func (s *Status) checkStatusByID(id int) bool {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	if (s.Targets[id].OK &&
 		!(s.State.AdministrativeState == "AdminOff")) ||
 		s.State.AdministrativeState == "AdminOn" {
@@ -80,6 +150,8 @@ func (s *Status) checkStatusByID(id int) bool {
 }
 
 func (s *Status) checkStatus() bool {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	if (s.isOk() && s.State.OK &&
 		!(s.State.AdministrativeState == "AdminOff")) ||
 		s.State.AdministrativeState == "AdminOn" {

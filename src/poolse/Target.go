@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -25,72 +24,38 @@ type Target struct {
 	UpCountThreshold          int64     `json:"up_count_threshold"` // this many UpCounts before marked OK again
 	DownCount                 int64     `json:"down_count"`
 	DownCountThreshold        int64     `json:"down_count_threshold"` // this many DownCounts before marked offline
-	Mutex                     *sync.Mutex
-}
-
-func (t *Target) shouldReload() bool {
-	ok := false
-	RTMUTEX.Lock()
-	for i := range RTARGETS {
-		if t.ID == RTARGETS[i] && !ok {
-			ok = true
-			// remove this index from the reload targets list
-			RTARGETS[i] = -1
-			RTNULLIFY++
-		}
-	}
-	RTMUTEX.Unlock()
-	return ok
 }
 
 // Monitor initiates the target monitor using target properties
-func (t *Target) Monitor() {
-	defer WG.Done()
-	for !t.shouldReload() {
-		STATUSMUTEX.Lock()
-		// this is the call to procedurally perform all checks
-		thisIterState := t.checkHealth()
-		thisIterState = t.validateUpDownThresholds(thisIterState)
+func (t *Target) Monitor(ch chan *Target) {
+	GlobalWaitGroupHelper(true)
+	defer GlobalWaitGroupHelper(false)
 
+	// this is the call to procedurally perform all checks
+	thisIterState := t.checkHealth()
+	thisIterState = t.validateUpDownThresholds(thisIterState)
+
+	func() {
+		StatusMu.Lock()
+		defer StatusMu.Unlock()
 		t.OK = thisIterState
 		t.LastChecked = time.Now()
 		if t.OK {
 			t.LastOK = t.LastChecked
 		}
-		STATUSMUTEX.Unlock()
+	}()
 
-		// take a snooze
-		time.Sleep(time.Duration(t.PollingInterval) * time.Second)
+	// take a snooze based on PollingInterval value
+	time.Sleep(time.Duration(t.PollingInterval) * time.Second)
 
-	}
-	RTMUTEX.Lock()
-	if RTNULLIFY == len(RTARGETS) {
-		RTARGETS = []int{}
-		RTNULLIFY = 0
-	}
-	RTMUTEX.Unlock()
-	if t.DownCount > 2147483640 {
-		t.DownCount = t.DownCountThreshold + 1
-	}
-	if t.UpCount > 2147483640 {
-		t.UpCount = t.UpCountThreshold + 1
-	}
-	return
+	// return Target pointer to channel and await next call
+	ch <- t
 }
 
 func (t *Target) checkHealth() bool {
-	defer func() {
-		if STATUS.State.StartupState {
-			if STATUS.isOk() {
-				STATUS.State.OK = true
-			} else {
-				STATUS.State.OK = false
-			}
-		}
-	}()
-
 	// get response body
 	var client = &http.Client{}
+
 	if !SETTINGS.Service.FollowRedirects {
 		client = &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -107,7 +72,6 @@ func (t *Target) checkHealth() bool {
 		return false
 	}
 	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
-
 	r, err := client.Do(req)
 
 	// if unable to connect, mark failed and move on
@@ -133,6 +97,8 @@ func (t *Target) checkHealth() bool {
 }
 
 func (t *Target) validateUpDownThresholds(curState bool) bool {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
 	newState := true
 	if curState {
 		t.DownCount = 0

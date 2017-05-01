@@ -66,28 +66,29 @@ func TestStoppingMonitorProcesses(t *testing.T) {
 
 }
 
-func TestCheckingStartupState(t *testing.T) {
-	s := Settings{
-		State: State{
-			StartupState: true,
-		},
-		Targets: []Target{
-			Target{
-				PollingInterval: 1,
-				OK:              true,
-			},
-		},
-	}
-	STATUS.Targets = []Target{
-		Target{
-			OK: true,
-		},
-	}
+// commented out because I don't know if I'll want it just yet
+// func TestCheckingStartupState(t *testing.T) {
+// 	s := Settings{
+// 		State: State{
+// 			StartupState: true,
+// 		},
+// 		Targets: []Target{
+// 			Target{
+// 				PollingInterval: 1,
+// 				OK:              true,
+// 			},
+// 		},
+// 	}
+// 	STATUS.Targets = []Target{
+// 		Target{
+// 			OK: true,
+// 		},
+// 	}
 
-	s.checkStartupState()
-	WG.Wait()
+// 	s.checkStartupState()
+// 	WG.Wait()
 
-	if !STATUS.State.OK {
-		t.Errorf("--- Top level state should be OK (true)")
-	}
-}
+// 	if !STATUS.State.OK {
+// 		t.Errorf("--- Top level state should be OK (true)")
+// 	}
+// }

@@ -6,7 +6,7 @@ import (
 
 const (
 	// VERSION of application
-	VERSION = "0.4.2"
+	VERSION = "0.5.2"
 
 	// APPNAME of application.  One place to change it everywhere else.  :shrug:
 	APPNAME = "Poolse"
@@ -19,24 +19,21 @@ var (
 	// SETTINGS Contains the loaded settings for the application
 	SETTINGS Settings
 
-	// SETTINGSMUTEX for manipulating global SETTINGS safely
-	SETTINGSMUTEX = &sync.Mutex{}
-
 	// STATUS hold the last results of a status poll of the target application
 	STATUS Status
-
-	// RTARGETS is how we tell goroutines to stop and reassess the configuration
-	RTARGETS []int
-
-	// RTNULLIFY when reloading settings, if this matches the len() of RTARGETS, zero both out.
-	RTNULLIFY int
-
-	// RTMUTEX is the thread safety for RTARGETS
-	RTMUTEX = &sync.Mutex{}
 
 	// SERVEDCOUNT is the running counter of requests served
 	SERVEDCOUNT int64
 
-	// STATUSMUTEX for controlling access to STATUS
-	STATUSMUTEX = &sync.Mutex{}
+	// WGMUTEX protects the global waitgroup from race issues
+	WGMUTEX sync.Mutex
+
+	// StatusMu protects the global Status struct from race issues
+	StatusMu sync.Mutex
+
+	// SettingsMu protects the global Status struct from race issues
+	SettingsMu sync.Mutex
+
+	// StopChan is used to tell workers to start or stop
+	StopChan = make(chan bool)
 )

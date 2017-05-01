@@ -23,35 +23,17 @@ type Settings struct {
 }
 
 func (s *Settings) load() {
+	// fill settings struct from config file
 	s.parseSettingsFile()
 
-	// Populate global STATUS with targets from config file
+	// copy Settings struct targets to Status
 	s.populateTargets()
 }
 
-func (s *Settings) checkStartupState() {
-	WG.Add(1)
-	go func() {
-		SETTINGSMUTEX.Lock()
-		ss := s.State.StartupState
-		tt := s.Targets
-		SETTINGSMUTEX.Unlock()
-		if ss {
-			// give the targets a bit to catch up
-			pi := findLongestPollingInterval(tt)
-			lut := findLargestUpThreshold(tt)
-			wait := (pi * lut) + 3
-			fmt.Printf("Waiting for %d seconds before continuing...", wait)
-			time.Sleep(time.Duration(wait) * time.Second)
-			if STATUS.isOk() {
-				STATUS.State.OK = true
-			}
-		}
-		WG.Done()
-	}()
-}
-
 func (s *Settings) parseSettingsFile() {
+	SettingsMu.Lock()
+	defer SettingsMu.Unlock()
+
 	confFile := "../../init/config.json"
 	if len(os.Args) > 1 {
 		confFile = os.Args[1]
@@ -81,15 +63,15 @@ func (s *Settings) parseSettingsFile() {
 	}
 
 	// apply the settings state to the STATUS state
-	STATUSMUTEX.Lock()
 	STATUS.State = s.State
-	STATUSMUTEX.Unlock()
-
 }
 
 func (s *Settings) populateTargets() {
-	SETTINGSMUTEX.Lock()
-	STATUSMUTEX.Lock()
+	StatusMu.Lock()
+	SettingsMu.Lock()
+
+	defer StatusMu.Unlock()
+	defer SettingsMu.Unlock()
 
 	STATUS.Version = VERSION
 	for i := range s.Targets {
@@ -109,39 +91,16 @@ func (s *Settings) populateTargets() {
 			STATUS.Targets,
 			s.Targets[i])
 	}
-	SETTINGSMUTEX.Unlock()
-	STATUSMUTEX.Unlock()
 }
 
 func (s *Settings) reloadSettings() {
-
-	s.stopAllTargetMonitors()
-
+	GlobalWaitGroupHelper(true)
+	StopChan <- true
 	// repopulate targets from config file, presumably updated with new stuff
 	s.parseSettingsFile()
 	s.populateTargets()
 
 	// resume motoring with new targets and settings
-	STATUS.startMonitor()
-	s.checkStartupState()
-	WG.Done()
-}
-
-func (s *Settings) stopAllTargetMonitors() {
-	for i := range s.Targets {
-		RTARGETS = append(RTARGETS, s.Targets[i].ID)
-	}
-	waitingForReset := true
-	// wait for all target goroutines to exit, leaving only main and http
-	for !waitingForReset {
-		if !(len(RTARGETS) > 0) {
-			time.Sleep(time.Duration(1) * time.Second)
-		} else {
-			waitingForReset = false
-		}
-	}
-
-	// set SETTINGS and STATUS to empty struct
-	SETTINGS = Settings{}
-	STATUS = Status{}
+	STATUS.startMonitor(StopChan)
+	GlobalWaitGroupHelper(false)
 }

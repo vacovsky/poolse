@@ -9,6 +9,9 @@ import (
 )
 
 func statusWeb(rw http.ResponseWriter, req *http.Request) {
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
+
 	result := false
 	var blob []byte
 
@@ -20,9 +23,7 @@ func statusWeb(rw http.ResponseWriter, req *http.Request) {
 		blob, _ = json.Marshal(&STATUS.Targets[id])
 		result = STATUS.Targets[id].OK
 	} else {
-		STATUSMUTEX.Lock()
 		blob, _ = json.Marshal(&STATUS)
-		STATUSMUTEX.Unlock()
 		result = STATUS.isOk()
 	}
 
