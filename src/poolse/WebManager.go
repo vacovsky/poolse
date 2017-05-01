@@ -29,6 +29,7 @@ func startWeb() {
 		"/toggle/adminreset": toggleResetAdminStateWeb,
 		"/toggle/off":        toggleOffWeb,
 
+		// view or reload settings file
 		"/settings":        settingsWeb,
 		"/settings/reload": settingsReloadWeb,
 
@@ -38,7 +39,7 @@ func startWeb() {
 
 		// show status as landing page?
 		"/help": displayReadme,
-		"/":     statusWeb,
+		"/":     dashboard,
 	}
 
 	// register routes
