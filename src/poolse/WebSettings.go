@@ -31,12 +31,36 @@ func settingsReloadWeb(rw http.ResponseWriter, req *http.Request) {
 
 	checkTime := time.Now().Unix()-SETTINGS.LastReload.Unix() < int64(longest+5)
 	if checkTime {
-		io.WriteString(rw, fmt.Sprintf("Settings are still being reloaded. New settings will be applied once the longest-running application monitor checks in.  This could take up to %d seconds.", longest+5))
+		io.WriteString(rw, fmt.Sprintf(`
+<html>
+	<head>
+		<meta http-equiv="refresh" content="%d;URL=/status">
+	</head>
+	<body>
+		Settings are still being reloaded.
+		<br/>
+		<br/>
+		New settings will be applied once the longest-running application monitor 
+		checks in.  This could take up to %d seconds, and the page will refresh 
+		automatically.
+	</body>
+</html>`,
+			longest+6, longest+5))
 	} else {
 		SETTINGS.LastReload = time.Now()
 		GlobalWaitGroupHelper(true)
 		go SETTINGS.reloadSettings()
 		// show caller new settings
-		io.WriteString(rw, fmt.Sprintf("Settings are being reloaded. This could take up to %d seconds.", longest+5))
+		io.WriteString(rw, fmt.Sprintf(`
+<html>
+	<head>
+		<meta http-equiv="refresh" content="%d;URL=/status">
+	</head>
+	<body>
+		Settings are being reloaded. This could take up to %d seconds and the page will refresh 
+		automatically.
+	</body>
+</html>`,
+			longest+6, longest+5))
 	}
 }

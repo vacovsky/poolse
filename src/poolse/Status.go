@@ -70,6 +70,7 @@ func (s *Status) startMonitor(stopChan chan bool) {
 				// send it back to monitor stuff
 				go tt.Monitor(updater)
 			}
+			break
 		}
 		// close(updater)
 	}()
