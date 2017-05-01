@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -23,6 +25,30 @@ type Target struct {
 	UpCountThreshold          int64     `json:"up_count_threshold"` // this many UpCounts before marked OK again
 	DownCount                 int64     `json:"down_count"`
 	DownCountThreshold        int64     `json:"down_count_threshold"` // this many DownCounts before marked offline
+	MembersEndpoint           string    `json:"MembersEndpoint"`
+	Members                   []Member  `json:"members"`
+}
+
+func (t *Target) loadMembers() {
+	var client = &http.Client{}
+
+	StatusMu.Lock()
+	var e = t.Endpoint + t.MembersEndpoint
+	StatusMu.Unlock()
+	req, err := http.NewRequest("GET", e, nil)
+	if err != nil {
+		return
+	}
+	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
+	r, err := client.Do(req)
+
+	bodyBytes, _ := ioutil.ReadAll(r.Body)
+	membersJSON := string(bodyBytes)
+
+	jsonParser := json.NewDecoder(membersJSON)
+	if err = jsonParser.Decode(&Member); err != nil {
+		fmt.Println("Could not load members.")
+	}
 }
 
 // Monitor initiates the target monitor using target properties
@@ -45,8 +71,14 @@ func (t *Target) Monitor(ch chan *Target) {
 	}()
 
 	StatusMu.Lock()
+	checkMembers := t.MembersEndpoint != ""
 	timeout := t.PollingInterval
 	StatusMu.Unlock()
+
+	if checkMembers {
+		t.loadMembers()
+	}
+
 	// take a snooze based on PollingInterval value
 	time.Sleep(time.Duration(timeout) * time.Second)
 

@@ -12,8 +12,8 @@
     });
     app.Root = '/';
 
-    app.controller('poolseControl', function ($scope, $rootScope, $http, $timeout, $filter, $cookies, $scope, $compile) {
-        $rootScope.updateInterval = 60000;
+    app.controller('poolseControl', function ($scope, $rootScope, $http, $interval, $filter, $cookies, $scope, $compile) {
+        $rootScope.updateInterval = 1000;//60000;
         $scope.status = {};
         $scope.searchText = "";
 
@@ -26,21 +26,25 @@
                 return "Never";
             }
         };
-        
+
         $scope.getStatus = function () {
             $http.get('/status')
                 .then(function (response) {
                     $scope.status = response.data;
-                });
+                })
+            if ($scope.status.Targets != undefined) {
+                $scope.status.Targets.forEach(function (element) {
+                    if (element.notes != "" && element.notes != undefined) {
+                    $http.get(element.endpoint + element.notes)
+                        .then(function (response) {
+                            $scope.status.Targets[element.id].nodes = response.data.servers.server;
+                        });
+                    }
+                })
+                console.log($scope.status);
+            };
         };
-
-        $scope.intervalFunction = function () {
-            $timeout(function () {
-                $scope.getStatus();
-                $scope.intervalFunction();
-            }, $rootScope.updateInterval);
-        };
-        $scope.getStatus();
-        $scope.intervalFunction();
+        $scope.getStatus()
+        $interval($scope.getStatus, $rootScope.updateInterval)
     });
 })();

@@ -27,18 +27,21 @@
 
 <body class="text-shadow">
     <div ng-controller="poolseControl as p">
-        <div id="nav" style="padding:25px">
-            <h1 class="text-center">VIP Status Dashboard</h1>
-            <div class="pfield col-sm-2" style="padding:5px;padding-left:15px">
-                <input type="text" ng-model="searchText" placeholder="Search" class="col-sm-2">
-            </div>
+        <h1 class="text-center">VIP Status Dashboard</h1>
 
+        <p class="text-center pfield" style="padding-left:15px">
+            <input type="text" ng-model="searchText" placeholder="Search" class="col-sm-2">
+        </p>
+        <br/>
+
+        <div id="nav" style="padding:25px">
             <div class="tbl-header">
                 <table cellpadding="0" cellspacing="0" border="0">
                     <thead>
-                        <th class="col-md-2">Name / ID</th>
+                        <th class="col-md-1">Name / ID</th>
                         <th class="col-md-1">Status</th>
-                        <th class="col-md-3">Endpoint</th>
+                        <th class="col-md-2">Endpoint</th>
+                        <th class="col-md-2">Nodes</th>
                         <th class="col-md-3">Last Checked</th>
                         <th class="col-md-3">Last Up</th>
                     </thead>
@@ -48,12 +51,20 @@
                 <table cellpadding="0" cellspacing="0" border="0">
                     <tbody>
                         <tr ng-repeat="t in status.Targets  | filter: searchText">
-                            <td class="col-md-2">{{t.name}} / {{t.id}}</td>
-                            <td ng-show="t.ok" style="background-color: #4CAF50;" class="col-md-1">Online</td>
-                            <td ng-show="!t.ok" style="background-color: #ff0000;" class="col-md-1">!! Offline !!</td>
-                            <td class="col-md-3">{{t.endpoint}}</td>
-                            <td class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
-                            <td class="col-md-3">{{p.prettyTime(t.last_up)}}</td>
+                            <td  ng-show="t.ok" class="col-md-1">{{t.id}}. {{t.name}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-1">{{t.id}}. {{t.name}}</td>
+                            <td ng-show="t.ok" style="background-color: #4CAF50;" class="col-md-1">ONLINE</td>
+                            <td ng-show="!t.ok" style="background-color: #ff4444;" class="col-md-1">OFFLINE</td>
+                            <td  ng-show="t.ok" class="col-md-2">{{t.endpoint}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">{{t.endpoint}}</td>
+                            <td  ng-show="t.ok" class="col-md-2">{{t.nodes}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">
+                                <ul ng-repeat="n in t.nodes">&#8226; {{n.name}}</ul>
+                            </td>
+                            <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
+                            <td ng-show="t.ok"  class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
                         </tr>
                     </tbody>
                 </table>
