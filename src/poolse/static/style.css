@@ -235,6 +235,7 @@ body {
   height: 100%;
   color: #fff;
   font-family: 'Open Sans', sans-serif;/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#627d4d+0,1f3b08+100;Olive+3D */
+
  background: #283048; /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #283048, #859398); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #283048, #859398); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */

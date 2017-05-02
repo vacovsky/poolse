@@ -27,12 +27,14 @@
 
 <body class="text-shadow">
     <div ng-controller="poolseControl as p">
+
         <div>
             <h1 class="text-center">VIP Status Dashboard</h1>
         </div>
         <div style="padding:30px" class="pfield ">
             <input type="text" ng-model="searchText" placeholder="Search" class="text-center col-sm-2">
         </div>
+
         <br/>
 
         <div id="nav" style="padding:25px">
@@ -52,6 +54,7 @@
                 <table cellpadding="0" cellspacing="0" border="0">
                     <tbody>
                         <tr ng-repeat="t in status.Targets  | filter: searchText">
+
                             <td ng-show="t.ok" class="col-md-1">{{t.id}}. {{t.name}}</td>
                             <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-1">{{t.id}}. {{t.name}}</td>
                             <td ng-show="t.ok" style="background-color: #4CAF50;" class="col-md-1">ONLINE</td>
@@ -73,6 +76,7 @@
                             <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
                             <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
                             <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
+
                         </tr>
                     </tbody>
                 </table>
@@ -80,6 +84,7 @@
         </div>
     </div>
     <!--<h2 class="text-center"><img height="100" width="150" src="static/stillheart.svg"></h2>-->
+
     <div class="text-center" style="padding-top: 15px">
         <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Poolse</span> by <a href="http://github.com/vacoj">Joe Vacovsky Jr.</a>        is licensed under
         <a rel="license" href="https://opensource.org/licenses/MIT">The MIT License (MIT)</a>.
