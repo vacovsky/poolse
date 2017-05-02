@@ -59,7 +59,7 @@
                             <td ng-show="t.ok" style="background-color: #4CAF50;" class="col-md-1">ONLINE</td>
                             <td ng-show="!t.ok" style="background-color: #ff4444;" class="col-md-1">OFFLINE</td>
                             <td ng-show="t.ok" class="col-md-2"><a href="{{t.endpoint}}">{{t.endpoint}}</a></td>
-                            <td ng-show="!t.ok" href="{{t.endpoint}}" style="color:white;background-color: rgba(0, 0, 0, 0.25);" class="col-md-2">{{t.endpoint}}</td>
+                            <td ng-show="!t.ok" style="color:white;background-color: rgba(0, 0, 0, 0.25);" class="col-md-2"><a style="color:white;" href="{{t.endpoint}}">{{t.endpoint}}</a></td>
 
                             <td ng-show="(t.members.length == 0 || t.members == undefined)" style="color:white;background-color: rgba(0, 0, 0, 0.25);" class="col-md-4"><p ng-click="showMembers(t.id, true)"><a style="color:white;" href>0 nodes</a></p></td>
                             <td ng-show="(t.members.length > 0)" style="background-color: rgba(0, 0, 0, 0.25);"
