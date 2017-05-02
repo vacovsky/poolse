@@ -61,18 +61,22 @@
                             <td ng-show="t.ok" class="col-md-2"><a href="{{t.endpoint}}">{{t.endpoint}}</a></td>
                             <td ng-show="!t.ok" style="color:white;background-color: rgba(0, 0, 0, 0.25);" class="col-md-2"><a style="color:white;" href="{{t.endpoint}}">{{t.endpoint}}</a></td>
 
-                            <td ng-show="(t.members.length == 0 || t.members == undefined)" style="color:white;background-color: rgba(0, 0, 0, 0.25);" class="col-md-4"><p ng-click="showMembers(t.id, true)"><a style="color:white;" href>0 nodes</a></p></td>
-                            <td ng-show="(t.members.length > 0)" style="background-color: rgba(0, 0, 0, 0.25);"
+                            <td ng-show="(t.members.length == 0 || t.members == undefined)" style="color:white;background-color: rgba(0, 0, 0, 0.25);"
                                 class="col-md-4">
+                                <p ng-click="showMembers(t.id, true)"><a style="color:white;" href>0 nodes</a></p>
+                            </td>
+                            <td ng-show="(t.members.length > 0)" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-4">
                                 <p ng-click="t.showMembers = !(t.showMembers == true)"><a href>{{t.members.length}} nodes</a></p>
                                 <ul ng-show="t.showMembers" ng-repeat="n in t.members">
+                                    <hr>
+
                                     <p ng-show="n.rise > 0">
                                         Endpoint: <a href="http://{{n.name}}" style="color:#4CAF50">{{n.name}}</a><br/>Rise:
                                         {{n.rise}}
                                         <br/> Fall: {{n.fall}}<br/> Type: {{n.type}}<br/> Status: {{n.status}}<br/>
                                     </p>
                                     <p ng-show="n.fall > 0">
-                                        Endpoint: <a href="http://{{n.name}}" style="color:#4CAF50">{{n.name}}</a><br/>Rise:
+                                        Endpoint: <a href="http://{{n.name}}" style="color:#ff4444">{{n.name}}</a><br/>Rise:
                                         {{n.rise}}
                                         <br/> Fall: {{n.fall}}<br/> Type: {{n.type}}<br/> Status: {{n.status}}<br/>
                                     </p>
