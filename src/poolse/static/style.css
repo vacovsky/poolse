@@ -235,10 +235,12 @@ body {
   height: 100%;
   color: #fff;
   font-family: 'Open Sans', sans-serif;/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#627d4d+0,1f3b08+100;Olive+3D */
-  background: #485563; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #485563, #29323c); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #485563, #29323c); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
+
+ background: #283048; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #283048, #859398); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #283048, #859398); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  }
+
 .login {
   position: absolute;
   top: 50%;
@@ -247,14 +249,9 @@ body {
   width: 300px;
   height: 300px;
 }
-.login h1 {
-  color: #fff;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  letter-spacing: 1px;
-  text-align: center;
-}
+
 .pfield input {
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
   background: rgba(0, 0, 0, 0.3);
   border: none;
   outline: none;
