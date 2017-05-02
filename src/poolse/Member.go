@@ -1,10 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // Member is a member of a load balanced pool
 type Member struct {
 	Fall     int    `json:"fall"`
@@ -15,11 +10,4 @@ type Member struct {
 	Status   string `json:"status"`
 	Type     string `json:"type"`
 	Upstream string `json:"upstream"`
-}
-
-func (m *Member) loadMembers() {
-	jsonParser := json.NewDecoder(fileContent)
-	if err = jsonParser.Decode(&s); err != nil {
-		fmt.Println("Could not load members.")
-	}
 }

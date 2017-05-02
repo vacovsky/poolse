@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -25,13 +24,17 @@ type Target struct {
 	UpCountThreshold          int64     `json:"up_count_threshold"` // this many UpCounts before marked OK again
 	DownCount                 int64     `json:"down_count"`
 	DownCountThreshold        int64     `json:"down_count_threshold"` // this many DownCounts before marked offline
-	MembersEndpoint           string    `json:"MembersEndpoint"`
+	MembersEndpoint           string    `json:"members_endpoint"`
 	Members                   []Member  `json:"members"`
 }
 
 func (t *Target) loadMembers() {
+	type tempMembers struct {
+		Servers struct {
+			Server []Member `json:"server"`
+		} `json:"servers"`
+	}
 	var client = &http.Client{}
-
 	StatusMu.Lock()
 	var e = t.Endpoint + t.MembersEndpoint
 	StatusMu.Unlock()
@@ -42,13 +45,13 @@ func (t *Target) loadMembers() {
 	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
 	r, err := client.Do(req)
 
-	bodyBytes, _ := ioutil.ReadAll(r.Body)
-	membersJSON := string(bodyBytes)
+	var members []Member
+	body, err := ioutil.ReadAll(r.Body)
+	err = json.Unmarshal(body, &members)
 
-	jsonParser := json.NewDecoder(membersJSON)
-	if err = jsonParser.Decode(&Member); err != nil {
-		fmt.Println("Could not load members.")
-	}
+	StatusMu.Lock()
+	defer StatusMu.Unlock()
+	t.Members = members
 }
 
 // Monitor initiates the target monitor using target properties

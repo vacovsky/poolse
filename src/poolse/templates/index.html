@@ -59,7 +59,7 @@
                             <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">{{t.endpoint}}</td>
                             <td  ng-show="t.ok" class="col-md-2">{{t.nodes}}</td>
                             <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">
-                                <ul ng-repeat="n in t.nodes">&#8226; {{n.name}}</ul>
+                                <ul ng-repeat="n in t.members">&#8226; {{n.name}}</ul>
                             </td>
                             <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
                             <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
