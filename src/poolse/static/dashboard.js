@@ -13,7 +13,7 @@
     app.Root = '/';
 
     app.controller('poolseControl', function ($scope, $rootScope, $http, $interval, $filter, $cookies, $scope, $compile) {
-        $rootScope.updateInterval = 1000;//60000;
+        $rootScope.updateInterval = 60000;
         $scope.status = {};
         $scope.searchText = "";
 
