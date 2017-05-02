@@ -73,18 +73,25 @@ go build
         "http_port": "5704",  // *string not int; port to listen on for incoming web requests
         "debug": false, // displays certain pieces of data in console if true
         "show_http_log": true, // shows log in console of calls being made if true
-        "state_file_name": "state.dat"  // name of state file.  defaults to state.dat if not preset
+        "state_file_name": "state.dat",  // name of state file.  defaults to state.dat if not preset
+        "follow_redirects": false  // whether or not to follow redirects when querying targets
     }
 }
 ```
 
-## API
+## Application Controls / API
 
-### Help Endpoints
+### Dashboard
 
 #### "/"
 
-- Displays README.md to caller
+- Displays simple dashboard of targets and status to caller.
+- Requires some setup:
+
+```bash
+cd poolse/src/poolse/static
+bower install
+```
 
 ### Status Endpoints
 

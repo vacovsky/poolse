@@ -1,0 +1,84 @@
+<!doctype html>
+<html ng-app="poolseDash">
+
+<head>
+    <title>Poolse: Dashboard</title>
+    <link rel="icon" href="/static/icon.png">
+    <link rel="stylesheet" href="/static/bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bower_components/ng-responsive-calendar/dist/css/calendar.min.css" />
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="/static/bower_components/chart.js/dist/Chart.js"></script>
+    <script type="text/javascript" src="/static/bower_components/moment/moment.js"></script>
+    <script src="/static/bower_components/ng-responsive-calendar/dist/js/calendar-tpls.min.js"></script>
+    <script type="text/javascript" src="/static/bower_components/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="/static/bower_components/angular-moment/angular-moment.js"></script>
+    <script src="/static/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/static/bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="/static/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/static/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/static/bower_components/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="/static/bower_components/prefix/src/prefix.js"></script>
+    <script type="text/javascript" src="/static/bower_components/angular-messages/angular-messages.js"></script>
+    <script src="/static/bower_components/angular-base64/angular-base64.js"></script>
+    <script src="/static/dashboard.js"></script>
+</head>
+
+<body class="text-shadow">
+    <div ng-controller="poolseControl as p">
+        <h1 class="text-center">VIP Status Dashboard</h1>
+
+        <p class="text-center pfield" style="padding-left:15px">
+            <input type="text" ng-model="searchText" placeholder="Search" class="col-sm-2">
+        </p>
+        <br/>
+
+        <div id="nav" style="padding:25px">
+            <div class="tbl-header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <thead>
+                        <th class="col-md-1">Name / ID</th>
+                        <th class="col-md-1">Status</th>
+                        <th class="col-md-2">Endpoint</th>
+                        <th class="col-md-2">Nodes</th>
+                        <th class="col-md-3">Last Checked</th>
+                        <th class="col-md-3">Last Up</th>
+                    </thead>
+                </table>
+            </div>
+            <div class="tbl-content">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <tbody>
+                        <tr ng-repeat="t in status.Targets  | filter: searchText">
+                            <td  ng-show="t.ok" class="col-md-1">{{t.id}}. {{t.name}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-1">{{t.id}}. {{t.name}}</td>
+                            <td ng-show="t.ok" style="background-color: #4CAF50;" class="col-md-1">ONLINE</td>
+                            <td ng-show="!t.ok" style="background-color: #ff4444;" class="col-md-1">OFFLINE</td>
+                            <td  ng-show="t.ok" class="col-md-2">{{t.endpoint}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">{{t.endpoint}}</td>
+                            <td ng-show="t.members.length >= 1" class="col-md-2">
+                                <ul ng-repeat="n in t.members">&#8226; {{n.name}}</ul>
+                            </td>
+                            <td ng-show="t.members.length == 0 || t.members == undefined" style="background-color: #282828;" class="col-md-2">0 nodes</td>
+                            <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
+                            <td ng-show="t.ok"  class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
+                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <h2 class="text-center"><img height="100" width="150" src="static/stillheart.svg"></h2>
+    <div class="text-center" style="padding-top: 15px">
+        <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Poolse</span> by <a href="http://github.com/vacoj">Joe Vacovsky Jr.</a>        is licensed under
+        <a rel="license" href="https://opensource.org/licenses/MIT">The MIT License (MIT)</a>.
+        <br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/vacoj/poolse" rel="dct:source">https://github.com/vacoj/poolse</a>.
+    </div>
+    </div>
+    </div>
+</body>
+
+</html>

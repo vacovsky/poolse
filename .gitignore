@@ -7,3 +7,4 @@ tags
 src/poolse/report
 .DS_Store
 init/testconfig.json
+bower_components

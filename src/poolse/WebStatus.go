@@ -8,6 +8,10 @@ import (
 	"strconv"
 )
 
+func dashboard(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "templates/index.html")
+}
+
 func statusWeb(rw http.ResponseWriter, req *http.Request) {
 	StatusMu.Lock()
 	defer StatusMu.Unlock()
