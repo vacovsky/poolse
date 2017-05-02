@@ -30,7 +30,10 @@ type Target struct {
 	Members                   []Member  `json:"members"`
 }
 
-func (t *Target) loadMembers() {
+func (t *Target) loadMembers(l time.Time) {
+	if time.Now().Sub(l) < time.Duration(time.Minute) {
+		return
+	}
 	type tempMembers struct {
 		Servers struct {
 			Server []Member `json:"server"`
@@ -65,6 +68,16 @@ func (t *Target) Monitor(ch chan *Target) {
 	GlobalWaitGroupHelper(true)
 	defer GlobalWaitGroupHelper(false)
 
+	StatusMu.Lock()
+	checkMembers := t.MembersEndpoint != ""
+	last := t.LastChecked
+	timeout := t.PollingInterval
+	StatusMu.Unlock()
+
+	if checkMembers {
+		t.loadMembers(last)
+	}
+
 	// this is the call to procedurally perform all checks
 	thisIterState := t.checkHealth()
 	thisIterState = t.validateUpDownThresholds(thisIterState)
@@ -78,15 +91,6 @@ func (t *Target) Monitor(ch chan *Target) {
 			t.LastOK = t.LastChecked
 		}
 	}()
-
-	StatusMu.Lock()
-	checkMembers := t.MembersEndpoint != ""
-	timeout := t.PollingInterval
-	StatusMu.Unlock()
-
-	if checkMembers {
-		t.loadMembers()
-	}
 
 	// take a snooze based on PollingInterval value
 	time.Sleep(time.Duration(timeout) * time.Second)

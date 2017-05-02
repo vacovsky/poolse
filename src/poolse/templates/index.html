@@ -44,9 +44,9 @@
                         <th class="col-md-1">Name / ID</th>
                         <th class="col-md-1">Status</th>
                         <th class="col-md-2">Endpoint</th>
-                        <th class="col-md-2">Nodes</th>
-                        <th class="col-md-3">Last Checked</th>
-                        <th class="col-md-3">Last Up</th>
+                        <th class="col-md-4">Nodes</th>
+                        <th class="col-md-2">Last Checked</th>
+                        <th class="col-md-2">Last Up</th>
                     </thead>
                 </table>
             </div>
@@ -54,29 +54,36 @@
                 <table cellpadding="0" cellspacing="0" border="0">
                     <tbody>
                         <tr ng-repeat="t in status.Targets  | filter: searchText">
-
                             <td ng-show="t.ok" class="col-md-1">{{t.id}}. {{t.name}}</td>
                             <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-1">{{t.id}}. {{t.name}}</td>
                             <td ng-show="t.ok" style="background-color: #4CAF50;" class="col-md-1">ONLINE</td>
                             <td ng-show="!t.ok" style="background-color: #ff4444;" class="col-md-1">OFFLINE</td>
-                            <td ng-show="t.ok" class="col-md-2">{{t.endpoint}}</td>
+                            <td ng-show="t.ok" class="col-md-2"><a href="{{t.endpoint}}">{{t.endpoint}}</a></td>
                             <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-2">{{t.endpoint}}</td>
-                            <td ng-show="t.members.length >= 1" class="col-md-2">
-                                <ul ng-repeat="n in t.members">
-                                    <a href="http://{{n.name}}" style="color:#4CAF50" ng-show="n.rise > 0">
-                                        &#8226; {{n.name}}
-                                    </a>
-                                    <a href="http://{{n.name}}" style="color:#ff4444" ng-show="n.fall > 0">
-                                        &#8226; {{n.name}}
-                                    </a>
+
+                            <td ng-show="(t.members.length == 0 || t.members == undefined)" style="color:white;background-color: rgba(0, 0, 0, 0.25);" class="col-md-4"><p ng-click="showMembers(t.id, true)"><a style="color:white;" href>0 nodes</a></p></td>
+                            <td ng-show="(t.members.length > 0)" style="background-color: rgba(0, 0, 0, 0.25);"
+                                class="col-md-4">
+                                <p ng-click="t.showMembers = !(t.showMembers == true)"><a href>{{t.members.length}} nodes</a></p>
+                                <ul ng-show="t.showMembers" ng-repeat="n in t.members">
+                                    <p ng-show="n.rise > 0">
+                                        Endpoint: <a href="http://{{n.name}}" style="color:#4CAF50">{{n.name}}</a><br/>Rise:
+                                        {{n.rise}}
+                                        <br/> Fall: {{n.fall}}<br/> Type: {{n.type}}<br/> Status: {{n.status}}<br/>
+                                    </p>
+                                    <p ng-show="n.fall > 0">
+                                        Endpoint: <a href="http://{{n.name}}" style="color:#4CAF50">{{n.name}}</a><br/>Rise:
+                                        {{n.rise}}
+                                        <br/> Fall: {{n.fall}}<br/> Type: {{n.type}}<br/> Status: {{n.status}}<br/>
+                                    </p>
                                 </ul>
                             </td>
-                            <td ng-show="t.members.length == 0 || t.members == undefined" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-2">0 nodes</td>
-                            <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
-                            <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
-                            <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
-                            <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
+                            <!--<td ng-show="t.members.length == 0 || t.members == undefined" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-2">0 nodes</td>-->
 
+                            <td ng-show="t.ok" class="col-md-2">{{p.prettyTime(t.last_checked)}}</td>
+                            <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
+                            <td ng-show="t.ok" class="col-md-2">{{p.prettyTime(t.last_ok)}}</td>
+                            <td ng-show="!t.ok" style="background-color: rgba(0, 0, 0, 0.25);" class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>
                         </tr>
                     </tbody>
                 </table>
