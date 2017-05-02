@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Target models the information required to perform a status check against an HTTP endpoint at interval
@@ -45,13 +47,13 @@ func (t *Target) loadMembers() {
 	req.Header.Set("User-Agent", APPNAME+"/"+VERSION)
 	r, err := client.Do(req)
 
-	var members []Member
+	var tm tempMembers
 	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &members)
+	err = json.Unmarshal(body, &tm)
 
 	StatusMu.Lock()
 	defer StatusMu.Unlock()
-	t.Members = members
+	t.Members = tm.Servers.Server
 }
 
 // Monitor initiates the target monitor using target properties
@@ -80,6 +82,7 @@ func (t *Target) Monitor(ch chan *Target) {
 
 	if checkMembers {
 		t.loadMembers()
+		spew.Dump(t)
 	}
 
 	// take a snooze based on PollingInterval value

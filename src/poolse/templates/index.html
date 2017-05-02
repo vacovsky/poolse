@@ -57,10 +57,10 @@
                             <td ng-show="!t.ok" style="background-color: #ff4444;" class="col-md-1">OFFLINE</td>
                             <td  ng-show="t.ok" class="col-md-2">{{t.endpoint}}</td>
                             <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">{{t.endpoint}}</td>
-                            <td  ng-show="t.ok" class="col-md-2">{{t.nodes}}</td>
-                            <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-2">
+                            <td ng-show="t.members.length >= 1" class="col-md-2">
                                 <ul ng-repeat="n in t.members">&#8226; {{n.name}}</ul>
                             </td>
+                            <td ng-show="t.members.length == 0 || t.members == undefined" style="background-color: #282828;" class="col-md-2">0 nodes</td>
                             <td ng-show="t.ok" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
                             <td ng-show="!t.ok" style="background-color: #282828;" class="col-md-3">{{p.prettyTime(t.last_checked)}}</td>
                             <td ng-show="t.ok"  class="col-md-3">{{p.prettyTime(t.last_ok)}}</td>

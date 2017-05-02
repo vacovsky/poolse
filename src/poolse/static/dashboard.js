@@ -41,7 +41,7 @@
                         });
                     }
                 })
-                console.log($scope.status);
+                // console.log($scope.status);
             };
         };
         $scope.getStatus()
