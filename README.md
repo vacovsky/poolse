@@ -1,5 +1,7 @@
 # Poolse
 
+Demo at <a href="http://poolse.vacovsky.us">poolse.vacovsky.us</a>.
+
 ## Features
 
 - Exposes a simple interface to "up" and "down" upstream nodes.
