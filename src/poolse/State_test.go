@@ -18,6 +18,6 @@ func TestFullStateCycle(t *testing.T) {
 	STATUS.State.loadState(SETTINGS.Service.StateFileName)
 
 	if STATUS.State.AdministrativeState != "foo" {
-		t.Errorf("STATUS.State.AdministrativeState should be foobar.")
+		t.Errorf("Want foobar, got %s", STATUS.State.AdministrativeState)
 	}
 }
