@@ -12,14 +12,14 @@
     });
     app.Root = '/';
 
-    app.controller('poolseControl', function ($scope, $rootScope, $http, $interval, $filter, $cookies, $scope, $compile) {
+    app.controller('poolseControl', function ($scope, $rootScope, $http, $interval, $filter, $cookies, $compile) {
         $rootScope.updateInterval = 60000;
         $scope.status = {};
         $scope.searchText = "";
+        $scope.showNodesOnTable = true;
 
         this.prettyTime = function (uglyTime) {
             if (uglyTime !== undefined && uglyTime !== null) {
-                // console.log(uglyTime)
                 var pt = moment(uglyTime).calendar();
                 return pt;
             } else {
@@ -32,6 +32,21 @@
             console.log($scope.status.Targets[id].showMembers)
 
         }
+
+        $scope.shouldShowNodes = function () {
+            largestNodeLength = 0;
+            $scope.status.Targets.forEach(function (element) {
+                if (element.nodes.length > largestNodeLength) {
+                    largestNodeLength = element.length.nodes;
+                }
+            })
+            if (largestNodeLength > 0) {
+                showNodesOnTable = true;
+            } else {
+                showNodesOnTable = false;                
+            }
+        };
+
 
         $scope.getStatus = function () {
             $http.get('/status')
@@ -47,8 +62,9 @@
                             });
                     }
                 })
-                // console.log($scope.status);
+                $scope.shouldShowNodes();
             };
+
         };
         $scope.getStatus()
         $interval($scope.getStatus, $rootScope.updateInterval)
