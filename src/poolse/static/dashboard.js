@@ -16,7 +16,7 @@
         $rootScope.updateInterval = 60000;
         $scope.status = {};
         $scope.searchText = "";
-        $scope.showNodesOnTable = true;
+        $scope.showNodesOnTable = false;
 
         this.prettyTime = function (uglyTime) {
             if (uglyTime !== undefined && uglyTime !== null) {
@@ -37,13 +37,13 @@
             largestNodeLength = 0;
             $scope.status.Targets.forEach(function (element) {
                 if (element.nodes.length > largestNodeLength) {
-                    largestNodeLength = element.length.nodes;
+                    largestNodeLength = element.nodes.length;
                 }
             })
             if (largestNodeLength > 0) {
-                showNodesOnTable = true;
+                $scope.showNodesOnTable = true;
             } else {
-                showNodesOnTable = false;                
+                $scope.showNodesOnTable = false;
             }
         };
 
